@@ -1,0 +1,710 @@
+<html lang="en"><head>
+		<title>GLSL Sandbox</title>
+		<meta charset="utf-8">
+		<style>
+
+			body {
+
+				background-color: #000000;
+				margin: 0px;
+				overflow: hidden;
+
+			}
+
+			#code {
+
+				position: absolute;
+
+				padding: 12px;
+
+				border: none;
+				border-radius: 5px;
+
+				color: #ffffff;
+				background-color: transparent;
+				font-family: Monospace;
+				font-size: 14px;
+				font-weight: bold;
+				text-shadow: rgba( 0, 0, 0, 1 ) 0px 1px 2px;
+
+				white-space: pre;
+
+			}
+
+			#code:hover {
+
+				background-color:rgba(0,0,0,.5);
+
+			}
+
+			button, select {
+
+				padding: 8px 12px 8px 12px;
+
+				border: none;
+				border-radius: 5px;
+				margin-right: 5px;
+
+				color: #ffffff;
+				background-color: #000000;
+				opacity: 0.5;
+
+				font-family: Monospace;
+				font-size: 12px;
+				font-weight: bold;
+
+				cursor: pointer;
+
+			}
+
+			button:hover, select:hover {
+
+				opacity: 1;
+
+			}
+
+			option {
+
+				color: #ffffff;
+				background-color: #000000;
+
+			}
+
+			textarea:focus {
+
+				outline: 0; /* this removes browser-side outline */
+
+			}
+
+		</style>
+	<script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script></head>
+	<body>
+
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-86951-7']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+		  })();
+		</script>
+
+		<script src="js/lzma.js"></script>
+
+		<script id="fragmentShader" type="x-shader/x-fragment">
+
+			#ifdef GL_ES
+			precision highp float;
+			#endif
+
+			uniform vec2 resolution;
+			uniform sampler2D texture;
+
+			void main() {
+
+				vec2 uv = gl_FragCoord.xy / resolution.xy;
+				gl_FragColor = texture2D( texture, uv );
+
+			}
+
+		</script>
+
+		<script id="vertexShader" type="x-shader/x-vertex">
+
+			attribute vec3 position;
+
+			void main() {
+
+				gl_Position = vec4( position, 1.0 );
+
+			}
+
+		</script>
+
+		<script>
+
+			var compressor = new LZMA( "js/lzma_worker.js" );
+
+			if ( !window.requestAnimationFrame ) {
+
+				window.requestAnimationFrame = ( function() {
+
+					return window.webkitRequestAnimationFrame ||
+					window.mozRequestAnimationFrame ||
+					window.oRequestAnimationFrame ||
+					window.msRequestAnimationFrame ||
+					function ( callback, element ) {
+
+						window.setTimeout( callback, 1000 / 60 );
+
+					};
+
+				} )();
+
+			}
+
+			// Greetings to Iq/RGBA! ;)
+
+			var quality = 2, quality_levels = [ 0.5, 1, 2, 4, 8 ];
+			var toolbar, compileButton, fullscreenButton;
+			var code, canvas, gl, buffer, currentProgram, vertexPosition,
+			parameters = { startTime: Date.now(), time: 0, mouseX: 0.5, mouseY: 0.5, screenWidth: 0, screenHeight: 0 },
+			frontTarget, backTarget, screenProgram;
+
+			init();
+			animate();
+
+			function init() {
+
+				var effect = document.createElement( 'div' );
+				document.body.appendChild( effect );
+
+				canvas = document.createElement( 'canvas' );
+				effect.appendChild( canvas );
+
+				//
+
+				code = document.createElement( 'textarea' );
+				code.id = 'code';
+				code.style.visibility = 'visible';
+
+				code.addEventListener( 'keydown', function ( event ) {
+
+					if ( event.keyCode == 9 ) {
+
+						// Fake TAB
+
+						event.preventDefault();
+
+						var start = code.selectionStart;
+						var end = code.selectionEnd;
+
+						code.value = code.value.substring( 0, start ) + '\t' + code.value.substring( end, code.value.length );
+
+						code.selectionStart = code.selectionEnd = start + 1;
+						code.focus();
+
+					}
+
+				}, false );
+
+				code.addEventListener( 'keyup', function ( event ) {
+
+					if ( event.keyCode == 37 ) return;
+					if ( event.keyCode == 38 ) return;
+					if ( event.keyCode == 39 ) return;
+					if ( event.keyCode == 40 ) return;
+
+					compile();
+
+				}, false );
+
+				document.body.appendChild( code );
+
+				if ( window.location.hash ) {
+
+					var hash = window.location.hash.substr( 1 );
+					var version = hash.substr( 0, 2 );
+
+					if ( version == 'A/' ) {
+
+						// LZMA
+
+						readURL( hash.substr( 2 ) );
+
+					} else {
+
+						// Basic format
+
+						code.value = decodeURIComponent( hash );
+
+					}
+
+				} else {
+
+					readURL( '5d00000100980200000000000000119a48c65ab5aec1f910f780dfdfe473e599a211a90304ab6a650a0bdc710e60d9ef6827f7e37c460aba047c4de9e20bce74f0e6773fe3b4b7d379f6f885aacf345507100f3a9c00b35ece337c99a5b1914781cf1261e20c852069d976e19e0626035accf277b6d605f6f79b5b829acddc05289378c5e94ed5e728c24b0c22e42ddd138eaafc87372557f72d2dd04c4538fde32958381dcc055e8bb8c995f6f131916a68f6a9eae6d314121e0fbcfc26aed27e4a9b352caf72ef1b2d94e7a0c30bb73bdceac95fd45a10ae5d0cba4fb744a5d815c78fe091f2be7dae03592fa89dc80524475f0d296359c067472f2efcf9f2695185e5a5d2a5cdf31d8ea098e48054863d3489cf72c148e9ac8fbb401c229d9e08e9b8ff39ced000' );
+
+				}
+
+				//
+
+				toolbar = document.createElement( 'div' );
+				toolbar.style.position = 'absolute';
+				toolbar.style.top = '25px';
+				toolbar.style.left = '25px';
+				document.body.appendChild( toolbar );
+
+				var rightside = document.createElement( 'div' );
+				rightside.style.position = 'absolute';
+				rightside.style.right = '0px';
+				toolbar.appendChild( rightside );
+
+				fullscreenButton = document.createElement( 'button' );
+				fullscreenButton.textContent = 'fullscreen';
+				fullscreenButton.addEventListener( 'click', function ( event ) {
+
+					document.body.webkitRequestFullScreen( Element.ALLOW_KEYBOARD_INPUT );
+
+				}, false );
+				rightside.appendChild( fullscreenButton );
+
+				var button = document.createElement( 'button' );
+				button.textContent = 'gallery';
+				button.addEventListener( 'click', function ( event ) {
+
+					location.href = 'http://glsl.heroku.com/';
+
+				}, false );
+				rightside.appendChild( button );
+
+				var button = document.createElement( 'button' );
+				button.textContent = 'hide code';
+				button.addEventListener( 'click', function ( event ) {
+
+					if ( code.style.visibility === 'visible' ) {
+
+						button.textContent = 'show code';
+						code.style.visibility = 'hidden';
+						select.style.visibility = 'hidden';
+						compileButton.style.visibility = 'hidden';
+
+					} else {
+
+						button.textContent = 'hide code';
+						code.style.visibility = 'visible';
+						select.style.visibility = 'visible';
+						compileButton.style.visibility = 'visible';
+
+					}
+
+				}, false );
+				toolbar.appendChild( button );
+
+				var select = document.createElement( 'select' );
+
+				for ( var i = 0; i < quality_levels.length; i ++ ) {
+
+					var option = document.createElement( 'option' );
+					option.textContent = quality_levels[ i ];
+					if ( quality_levels[ i ] == quality ) option.selected = true;
+					select.appendChild( option );
+
+				}
+
+				select.addEventListener( 'change', function ( event ) {
+
+					quality = quality_levels[ event.target.selectedIndex ];
+					onWindowResize();
+
+				}, false );
+
+				toolbar.appendChild( select );
+
+				compileButton = document.createElement( 'button' );
+				compileButton.textContent = 'compile';
+				compileButton.addEventListener( 'click', function ( event ) {
+
+					compile();
+
+				}, false );
+				toolbar.appendChild( compileButton );
+
+				// Initialise WebGL
+
+				try {
+
+					gl = canvas.getContext( 'experimental-webgl', { preserveDrawingBuffer: true } );
+
+				} catch( error ) { }
+
+				if ( !gl ) {
+
+					alert("WebGL not supported");
+					throw "cannot create webgl context";
+
+				}
+
+				// Create vertex buffer (2 triangles)
+
+				buffer = gl.createBuffer();
+				gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
+				gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( [ - 1.0, - 1.0, 1.0, - 1.0, - 1.0, 1.0, 1.0, - 1.0, 1.0, 1.0, - 1.0, 1.0 ] ), gl.STATIC_DRAW );
+
+				document.addEventListener( 'mousemove', function ( event ) {
+
+					parameters.mouseX = event.clientX / window.innerWidth;
+					parameters.mouseY = 1 - event.clientY / window.innerHeight;
+
+				}, false );
+
+				onWindowResize();
+				window.addEventListener( 'resize', onWindowResize, false );
+
+				if ( code.value ) compile();
+
+				compileScreenProgram();
+
+			}
+
+			function save( width, height ) {
+
+				canvas.width = width;
+				canvas.height = height;
+				parameters.screenWidth = width;
+				parameters.screenHeight = height;
+
+				gl.viewport( 0, 0, width, height );
+				createRenderTargets();
+
+				render();
+
+				window.open( canvas.toDataURL('image/png'), 'mywindow' );
+
+				onWindowResize();
+
+			}
+
+			function compile() {
+
+				var program = gl.createProgram();
+				var fragment = document.getElementById( 'code' ).value;
+
+				var vs = createShader( 'attribute vec3 position; void main() { gl_Position = vec4( position, 1.0 ); }', gl.VERTEX_SHADER );
+				var fs = createShader( fragment, gl.FRAGMENT_SHADER );
+
+				if ( vs == null || fs == null ) return null;
+
+				gl.attachShader( program, vs );
+				gl.attachShader( program, fs );
+
+				gl.deleteShader( vs );
+				gl.deleteShader( fs );
+
+				gl.linkProgram( program );
+
+				if ( !gl.getProgramParameter( program, gl.LINK_STATUS ) ) {
+
+					console.error( 'VALIDATE_STATUS: ' + gl.getProgramParameter( program, gl.VALIDATE_STATUS ), 'ERROR: ' + gl.getError() );
+					compileButton.style.color = '#ff0000';
+					compileButton.textContent = 'compiled with errors';
+
+					return;
+
+				}
+
+				if ( currentProgram ) {
+
+					gl.deleteProgram( currentProgram );
+					setURL( fragment );
+
+				}
+
+				currentProgram = program;
+
+				compileButton.style.color = '#00ff00';
+				compileButton.textContent = 'compiled succesfully';
+
+				// Cache uniforms
+
+				cacheUniformLocation( program, 'time' );
+				cacheUniformLocation( program, 'mouse' );
+				cacheUniformLocation( program, 'resolution' );
+				cacheUniformLocation( program, 'backbuffer' );
+
+				// Load program into GPU
+
+				gl.useProgram( currentProgram );
+
+				// Set up buffers
+
+				gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
+				gl.vertexAttribPointer( vertexPosition, 2, gl.FLOAT, false, 0, 0 );
+				gl.enableVertexAttribArray( vertexPosition );
+
+			}
+
+			function compileScreenProgram() {
+
+				var program = gl.createProgram();
+				var fragment = document.getElementById( 'fragmentShader' ).textContent;
+				var vertex = document.getElementById( 'vertexShader' ).textContent;
+
+				var vs = createShader( vertex, gl.VERTEX_SHADER );
+				var fs = createShader( fragment, gl.FRAGMENT_SHADER );
+
+				gl.attachShader( program, vs );
+				gl.attachShader( program, fs );
+
+				gl.deleteShader( vs );
+				gl.deleteShader( fs );
+
+				gl.linkProgram( program );
+
+				if ( !gl.getProgramParameter( program, gl.LINK_STATUS ) ) {
+
+					console.error( 'VALIDATE_STATUS: ' + gl.getProgramParameter( program, gl.VALIDATE_STATUS ), 'ERROR: ' + gl.getError() );
+
+					return;
+
+				}
+
+				screenProgram = program;
+
+				cacheUniformLocation( program, 'resolution' );
+				cacheUniformLocation( program, 'texture' );
+
+			}
+
+			function cacheUniformLocation( program, label ) {
+
+				if ( program.uniformsCache === undefined ) {
+
+					program.uniformsCache = {};
+
+				}
+
+				program.uniformsCache[ label ] = gl.getUniformLocation( program, label );
+
+			}
+
+			//
+
+			function createTarget( width, height ) {
+
+				var target = {};
+
+				target.framebuffer = gl.createFramebuffer();
+				target.renderbuffer = gl.createRenderbuffer();
+				target.texture = gl.createTexture();
+
+				// set up framebuffer
+
+				gl.bindTexture( gl.TEXTURE_2D, target.texture );
+				gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null );
+
+				gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );
+				gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
+
+				gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
+				gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
+
+				gl.bindFramebuffer( gl.FRAMEBUFFER, target.framebuffer );
+				gl.framebufferTexture2D( gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, target.texture, 0 );
+
+				// set up renderbuffer
+
+				gl.bindRenderbuffer( gl.RENDERBUFFER, target.renderbuffer );
+
+				gl.renderbufferStorage( gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height );
+				gl.framebufferRenderbuffer( gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, target.renderbuffer );
+
+				// clean up
+
+				gl.bindTexture( gl.TEXTURE_2D, null );
+				gl.bindRenderbuffer( gl.RENDERBUFFER, null );
+				gl.bindFramebuffer( gl.FRAMEBUFFER, null);
+
+				return target;
+
+			}
+
+			function createRenderTargets() {
+
+				frontTarget = createTarget( parameters.screenWidth, parameters.screenHeight );
+				backTarget = createTarget( parameters.screenWidth, parameters.screenHeight );
+
+			}
+
+			//
+
+			var dummyFunction = function() {};
+
+			function setURL( shaderString ) {
+
+				compressor.compress( shaderString, 1, function( bytes ) {
+
+					var hex = convertBytesToHex( bytes );
+					window.location.replace( '#A/' + hex );
+
+				},
+				dummyFunction );
+
+			}
+
+			function readURL( hash ) {
+
+				var bytes = convertHexToBytes( hash );
+
+				compressor.decompress( bytes, function( text ) {
+
+					code.value = text;
+					compile();
+
+				},
+				dummyFunction );
+
+			}
+
+			function convertHexToBytes( text ) {
+
+				var tmpHex, array = [];
+
+				for ( var i = 0; i < text.length; i += 2 ) {
+
+					tmpHex = text.substring( i, i + 2 );
+					array.push( parseInt( tmpHex, 16 ) );
+
+				}
+
+				return array;
+
+			}
+
+			function convertBytesToHex( byteArray ) {
+
+				var tmpHex, hex = "";
+
+				for ( var i = 0, il = byteArray.length; i < il; i ++ ) {
+
+					if ( byteArray[ i ] < 0 ) {
+
+						byteArray[ i ] = byteArray[ i ] + 256;
+
+					}
+
+					tmpHex = byteArray[ i ].toString( 16 );
+
+					// add leading zero
+
+					if ( tmpHex.length == 1 ) tmpHex = "0" + tmpHex;
+
+					hex += tmpHex;
+
+				}
+
+				return hex;
+
+			}
+
+			//
+
+			function createShader( src, type ) {
+
+				var shader = gl.createShader( type );
+
+				gl.shaderSource( shader, src );
+				gl.compileShader( shader );
+
+				compileButton.title = '';
+
+				if ( !gl.getShaderParameter( shader, gl.COMPILE_STATUS ) ) {
+
+					var error = gl.getShaderInfoLog( shader );
+
+					compileButton.title = error;
+					console.error( error );
+
+					compileButton.style.color = '#ff0000';
+					compileButton.textContent = 'compiled with errors';
+
+					return null;
+
+				}
+
+				return shader;
+
+			}
+
+			//
+
+			function onWindowResize( event ) {
+
+				toolbar.style.width = window.innerWidth - 47 + 'px';
+
+				code.style.top = '75px';
+				code.style.left = '25px';
+				code.style.width = ( window.innerWidth - 75 ) + 'px';
+				code.style.height = ( window.innerHeight - 125 ) + 'px';
+
+				canvas.width = window.innerWidth / quality;
+				canvas.height = window.innerHeight / quality;
+
+				canvas.style.width = window.innerWidth + 'px';
+				canvas.style.height = window.innerHeight + 'px';
+
+				parameters.screenWidth = canvas.width;
+				parameters.screenHeight = canvas.height;
+
+				gl.viewport( 0, 0, canvas.width, canvas.height );
+
+				createRenderTargets();
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+				render();
+
+			}
+
+			function render() {
+
+				if ( !currentProgram ) return;
+
+				parameters.time = Date.now() - parameters.startTime;
+
+				// Set uniforms for custom shader
+
+				gl.useProgram( currentProgram );
+
+				gl.uniform1f( currentProgram.uniformsCache[ 'time' ], parameters.time / 1000 );
+				gl.uniform2f( currentProgram.uniformsCache[ 'mouse' ], parameters.mouseX, parameters.mouseY );
+				gl.uniform2f( currentProgram.uniformsCache[ 'resolution' ], parameters.screenWidth, parameters.screenHeight );
+				gl.uniform1i( currentProgram.uniformsCache[ 'backbuffer' ], 0 );
+
+				gl.activeTexture( gl.TEXTURE0 );
+				gl.bindTexture( gl.TEXTURE_2D, backTarget.texture );
+
+				// Render custom shader to front buffer
+
+				gl.bindFramebuffer( gl.FRAMEBUFFER, frontTarget.framebuffer );
+
+				gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
+				gl.drawArrays( gl.TRIANGLES, 0, 6 );
+
+				// Set uniforms for screen shader
+
+				gl.useProgram( screenProgram );
+
+				gl.uniform2f( screenProgram.uniformsCache[ 'resolution' ], parameters.screenWidth, parameters.screenHeight );
+				gl.uniform1i( screenProgram.uniformsCache[ 'texture' ], 1 );
+
+				gl.activeTexture( gl.TEXTURE1 );
+				gl.bindTexture( gl.TEXTURE_2D, frontTarget.texture );
+
+				// Render front buffer to screen
+
+				gl.bindFramebuffer( gl.FRAMEBUFFER, null );
+
+				gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
+				gl.drawArrays( gl.TRIANGLES, 0, 6 );
+
+				// Swap buffers
+
+				var tmp = frontTarget;
+				frontTarget = backTarget;
+				backTarget = tmp;
+
+			}
+
+		</script><div><canvas width="576" height="138" style="width: 1152px; height: 276px; "></canvas></div><textarea id="code" style="visibility: visible; top: 75px; left: 25px; width: 1077px; height: 151px; "></textarea><div style="position: absolute; top: 25px; left: 25px; width: 1105px; "><div style="position: absolute; right: 0px; "><button>fullscreen</button><button>gallery</button></div><button>hide code</button><select><option>0.5</option><option>1</option><option>2</option><option>4</option><option>8</option></select><button title="" style="color: rgb(0, 255, 0); ">compiled succesfully</button></div>
+
+	
+
+</body></html>
