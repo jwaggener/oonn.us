@@ -16,11 +16,17 @@ BBThreeD.Views.Plane = Backbone.View.extend({
 		//this.plane.rotation.x = - 90 * ( Math.PI / 180 );
 		this.plane.position.x = this.position.x;
 		this.plane.position.y = this.position.y;
-		console.log( "this.position", this.position );
 		this.plane.doubleSided = true;
 		this.plane.overdraw = true;
 		
+		$( this.plane ).bind( "hello", this.hello3DWorld );
+		
 		return this.plane;
+	},
+	
+	hello3DWorld: function(){
+		console.log("hello 3d from the plane");
+		//set a target property
 	}
 	
 })
