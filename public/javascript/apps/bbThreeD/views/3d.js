@@ -14,6 +14,7 @@ BBThreeD.Views.ThreeD = Backbone.View.extend({
 		this.windowHalfY = window.innerHeight / 2;
 		
 		$(document).bind( "click", this.onDocumentMouseDown );
+		$(document).bind( "touchstart", this.onDocumentMouseDown );
 					
 	},
 	
@@ -28,7 +29,7 @@ BBThreeD.Views.ThreeD = Backbone.View.extend({
 			[ { x:0, y:200 }, { x:50, y:200 }, { x:100, y:200 }, { x:150, y:200 }, { x:200, y:200 } ]
 		];
 		
-		this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
+		this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );//OrthographicCamera( -150, 150, -150, 50, -100, 500);
 		this.camera.position.y = 0;
 		this.camera.position.z = 300;
 		
@@ -36,7 +37,7 @@ BBThreeD.Views.ThreeD = Backbone.View.extend({
 		
 		this.projector = new THREE.Projector();
 		
-		this.renderer = new THREE.CanvasRenderer();
+		this.renderer = new THREE.CanvasRenderer();//CanvasRenderer works on iPad, WebGLRenderer works in Chrome
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
 		
 		var i, j, l1, l2;
@@ -52,7 +53,6 @@ BBThreeD.Views.ThreeD = Backbone.View.extend({
 			for( j = 0; j < l2; j++ ){
 				this.grid[i][j].x += offsetX; this.grid[i][j].y += offsetY;
 				plane = new BBThreeD.Views.Plane( { position: this.grid[i][j] } ).render();
-				$( plane ).bind( "hello", this.hello3DWorld );
 				this.scene.add( plane );
 				this.planes.push( plane );
 			}
@@ -61,38 +61,39 @@ BBThreeD.Views.ThreeD = Backbone.View.extend({
 		return this.renderer.domElement;
 	},
 	
-	hello3DWorld: function( event, obj, two ){
-		obj.object.materials[ 0 ].color.setHex( Math.random() * 0xffffff );
-		this.rotateItems.push( obj.object );
-		console.log("obj.object.materials[ 0 ].color",obj.object.materials[ 0 ].color);
-	},
-	
 	animate: function() {
 		window.requestAnimationFrame( this.animate );
 		this.render3d();
 	},
 	
 	render3d: function () {
-		var i, l;
-		l = this.rotateItems.length;
-		//this.camera.rotation.y += .05;
-		for( i = 0; i < l; i++ ){
-			this.rotateItems[ i ].rotation.y += .05;
-		}
-		//this.plane.rotation.y += .00;
+		TWEEN.update();
 		this.renderer.render( this.scene, this.camera );
 	},
 	
 	onDocumentMouseDown: function( event ) {
-
+		
+		var e;
+		var x, y;
+		var vector, ray, intersects;
+		
 		event.preventDefault();
-
-		var vector = new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
+		
+		e = event.originalEvent;
+		if( e.touches ){
+			x = e.touches[0].pageX;
+			y = e.touches[0].pageY;
+		}else{
+			x = event.clientX;
+			y = event.clientY;
+		}
+		
+		vector = new THREE.Vector3( ( x / window.innerWidth ) * 2 - 1, - ( y / window.innerHeight ) * 2 + 1, 0.5 );
 		this.projector.unprojectVector( vector, this.camera );
 
-		var ray = new THREE.Ray( this.camera.position, vector.subSelf( this.camera.position ).normalize() );
+		ray = new THREE.Ray( this.camera.position, vector.subSelf( this.camera.position ).normalize() );
 		
-		var intersects = ray.intersectObjects( this.planes );
+		intersects = ray.intersectObjects( this.planes );
 		
 		if ( intersects.length > 0 ) {
 			
