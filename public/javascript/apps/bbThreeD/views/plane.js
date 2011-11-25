@@ -4,12 +4,9 @@ BBThreeD.Views.Plane = Backbone.View.extend({
 	
 	initialize: function(){
 		_.bindAll( this );
-		console.log( "this.options.position", this.options.position );
 		this.position = this.options.position || { x:0, y:0, z:0 };
 		this.dimensions = this.options.dimensions || { width:50, height:50 };
 		this.plane;
-		this.__dirty = false;
-		this.targetRotation;
 		this.materialsPos = 4;
 	},
 	
@@ -21,12 +18,12 @@ BBThreeD.Views.Plane = Backbone.View.extend({
 		geom = new THREE.CubeGeometry( this.dimensions.width, this.dimensions.height, 10 );
 		materials = [ ];
 		materials = [
-			new THREE.MeshBasicMaterial( { color: 0xcccccc, shininess:0, opacity:1 } ), //right, green
-			new THREE.MeshBasicMaterial( { color: 0xcccccc, shininess:0, opacity:1 } ), //left, yellow
-			new THREE.MeshBasicMaterial( { color: 0xcccccc, shininess:0, opacity:1 } ), //top, red
-			new THREE.MeshBasicMaterial( { color: 0xcccccc, shininess:0, opacity:1 } ), //bottom, blue
+			new THREE.MeshBasicMaterial( { color: 0xcccccc, shininess:0, opacity:1 } ), //right
+			new THREE.MeshBasicMaterial( { color: 0xcccccc, shininess:0, opacity:1 } ), //left
+			new THREE.MeshBasicMaterial( { color: 0xcccccc, shininess:0, opacity:1 } ), //top
+			new THREE.MeshBasicMaterial( { color: 0xcccccc, shininess:0, opacity:1 } ), //bottom
 			new THREE.MeshBasicMaterial( { color: 0x000000, shininess:0, opacity:1 } ), //front
-			new THREE.MeshBasicMaterial( { color: 0xff00ff, shininess:0, opacity:1 } ) //back, pink
+			new THREE.MeshBasicMaterial( { color: 0xff00ff, shininess:0, opacity:1 } ) //back
 		]
 		
 		geom = new THREE.CubeGeometry( this.dimensions.width, this.dimensions.height, 0, 1, 1, 1, materials );
@@ -63,10 +60,6 @@ BBThreeD.Views.Plane = Backbone.View.extend({
 		).easing( TWEEN.Easing.Linear.EaseNone).start();
 		//obj.object.geometry.materials[ 5 ].color.setHex( Math.random() * 0xffffff );
 		console.log( "this.plane.geometry.materials[ 5 ].color", this.plane.geometry.materials[ 5 ].color );
-		
-	},
-	
-	update: function(){
 		
 	}
 	
