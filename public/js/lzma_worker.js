@@ -1,5 +1,5 @@
 var LZMA,
-
+javascript
     action_compress   = 1,
     action_decompress = 2,
     action_update     = 3;

@@ -1,7 +1,9 @@
 var Utilities = {};
 Utilities.colorUtils = {
 	
-	compliment: function (c) {
+	/* returns the compliment of a color using HSL
+	*/
+	compliment: function ( c ) {
 		
 		var rgb = Utilities.colorUtils.toRGBhash( c );//{ r:00, g:00, b:00 }
 		var r = rgb.r/255;//0,1,3,.03,.0333
@@ -54,7 +56,69 @@ Utilities.colorUtils = {
 		return rgbhex;
 	},
 	
-	//takes {hue:, saturation:, lightness:} in decimals and converts to something css can use.
+	/* this one works */
+	hslToRgb: function (h, s, l){
+	    var r, g, b;
+
+	    if(s == 0){
+	        r = g = b = l; // achromatic
+	    }else{
+	        function hue2rgb(p, q, t){
+	            if(t < 0) t += 1;
+	            if(t > 1) t -= 1;
+	            if(t < 1/6) return p + (q - p) * 6 * t;
+	            if(t < 1/2) return q;
+	            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+	            return p;
+	        }
+
+	        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+	        var p = 2 * l - q;
+	        r = hue2rgb(p, q, h + 1/3);
+	        g = hue2rgb(p, q, h);
+	        b = hue2rgb(p, q, h - 1/3);
+	    }
+
+	    return { r: r * 1.0, g: g * 1.0, b: b * 1.0 };
+	},
+	
+	/*
+	{ hue:, saturation:, value: } to
+	{ r:, g:, b: }
+	*/
+	
+	hslToRGB: function( c ){
+		var h, s, l
+		var $var_1, $var_2
+		
+		h = c.hue;
+		s = c.saturation;
+		l = c.lightness
+		
+		if (s == 0){
+			r = l * 255;
+			g = l * 255;
+			b = l * 255;
+		}else{
+			if (l < 0.5){
+				$var_2 = l * (1 + s);
+			}else{
+				$var_2 = (l + s) - (s * l);
+			};
+
+			$var_1 = 2 * l - $var_2;
+			r = 255 * Utilities.colorUtils.hue_2_rgb($var_1,$var_2,h + (1 / 3));
+			g = 255 * Utilities.colorUtils.hue_2_rgb($var_1,$var_2,h);
+			b = 255 * Utilities.colorUtils.hue_2_rgb($var_1,$var_2,h - (1 / 3));
+		};
+		
+		return { r:r, g:g, b:b };
+	},
+	
+	/*input - { hue: , saturation: , lightness: }
+	output - #000000
+	*/
+	
 	hslToHex: function( c ){
 		
 		var h, s, l
@@ -97,7 +161,11 @@ Utilities.colorUtils = {
 		
 	},
 	
-	toRGBhash: function (c) {	
+	/*
+	input - either #000000 or rgb:
+	output - { r: , g: , b: }
+	*/
+	toRGBhash: function ( c ) {	
 		var red, green, blue;
 		if (c.substr(0, 1) === '#')
 		{
@@ -114,9 +182,12 @@ Utilities.colorUtils = {
 		}else{
 			return 'color is not a recognized format.'
 		}
-		return { r:red, g:green, b:blue };
+		return { r: red, g: green, b: blue };
 	},
 	
+	/*input - { r: , g: , b: }
+	outout - { hue: , saturation: , lightness: }
+	*/
 	toHSL: function ( c ) {
 
 		var color

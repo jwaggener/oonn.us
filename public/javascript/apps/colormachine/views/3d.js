@@ -1,4 +1,4 @@
-BBThreeD.Views.ThreeD = Backbone.View.extend({
+ColorMachine.Views.ThreeD = Backbone.View.extend({
 	
 	id: "container",
 	
@@ -45,13 +45,13 @@ BBThreeD.Views.ThreeD = Backbone.View.extend({
 			l2 = this.grid[i].length;
 			for( j = 0; j < l2; j++ ){
 				this.grid[i][j].x; this.grid[i][j].y;
-				plane = new BBThreeD.Views.Plane( { position: this.grid[i][j], dimensions:{ width: 250/16, height: 250/16 } } );
+				plane = new ColorMachine.Views.Plane( { position: this.grid[i][j], dimensions:{ width: 250/16, height: 250/16 } } );
 				this.scene.add( plane.render() );
 				this.planes.push( plane );
 			}
 		}
 		
-		setInterval( this.flipCard, 5 );
+		setInterval( this.flipCard, 300 );
 		
 		return this.renderer.domElement;
 		
@@ -69,7 +69,6 @@ BBThreeD.Views.ThreeD = Backbone.View.extend({
 	},
 	
 	flipCard: function(){
-		console.log("flipCard");
 		var plane = this.planes[ Math.floor( Math.random() * this.planes.length ) ];
 		plane.hello3DWorld();
 	},

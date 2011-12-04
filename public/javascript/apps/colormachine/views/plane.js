@@ -1,4 +1,4 @@
-BBThreeD.Views.Plane = Backbone.View.extend({
+ColorMachine.Views.Plane = Backbone.View.extend({
 	
 	/* backbone view object for a simple double-sided plane*/
 	
@@ -44,8 +44,7 @@ BBThreeD.Views.Plane = Backbone.View.extend({
 	},
 	
 	hello3DWorld: function(){
-		console.log("hello 3d from the plane");
-		var targetY, tween;
+		var targetY, tween, c, h, hsl, rgb;
 		if( !this.dirty ){
 			this.dirty = true;
 			targetY = this.plane.rotation.y + 180 * Math.PI/180;
@@ -57,17 +56,18 @@ BBThreeD.Views.Plane = Backbone.View.extend({
 		
 				tween.onComplete( this.tweenComplete );
 				this.materialsPos = ( this.materialsPos == 5 ) ? 4 : 5;
+				hsl = { hue: Utilities.spectrum.red( ), saturation: 1.0, lightness: Utilities.lightness.medium() };
+				rgb = Utilities.colorUtils.hslToRgb( hsl.hue, hsl.saturation, hsl.lightness );
 				new TWEEN.Tween( this.plane.geometry.materials[ this.materialsPos ].color ).to( {
-					b: Math.random() * 1,
-					g: Math.random() * 1,
-					r: Math.random() * 1
+					b: rgb.b,
+					g: rgb.g,
+					r: rgb.r
 					}, 600
-				).easing( TWEEN.Easing.Linear.EaseNone).start();
+				).easing( TWEEN.Easing.Linear.EaseNone ).start();
 		}
 	},
 	
 	tweenComplete: function(){
-		console.log( "tweenComplete" );
 		this.dirty = false;
 	}
 	

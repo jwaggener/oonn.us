@@ -1,0 +1,59 @@
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>hue saturation lightness</title>
+		
+		<script src="javascript/libs/jquery-1.6.4.min.js" ></script>
+		<script src="javascript/color.js" ></script>
+		
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(
+			
+				function( ){
+					var hsl, hex;
+					var i, t, increment, out;
+					hsl = { hue: 0.0, saturation: 1.0, lightness: 0.5 };
+					t = 100;
+					increment = 1.0 / t;
+					out = "";
+					for ( i = 0; i <= t; i++ ){
+						hex = Utilities.colorUtils.hslToHex( hsl );
+						out += '<div style="background-color:'+ hex + '; width:100px; height:15px; overflow: hidden; padding: 5px;" >' + hsl.hue + '</div>';
+						hsl.hue += increment;
+					}
+					$("#col1").html(out);
+					
+					out = "";
+					hsl.hue = 0.0;
+					hsl.saturation = 0;
+					for ( i = 0; i <= t; i++ ){
+						hex = Utilities.colorUtils.hslToHex( hsl );
+						out += '<div style="background-color:'+ hex + '; width:100px; height:15px; overflow: hidden; padding: 5px;" >' + hsl.saturation + '</div>';
+						hsl.saturation += increment;
+					}
+					$("#col2").html(out);
+					
+					out = "";
+					hsl.hue = 0.0;
+					hsl.saturation = 1.0;
+					hsl.lightness = 0.0;
+					for ( i = 0; i <= t; i++ ){
+						hex = Utilities.colorUtils.hslToHex( hsl );
+						out += '<div style="background-color:'+ hex + '; width:100px; height:15px; overflow: hidden; padding: 5px;" >' + hsl.lightness + '</div>';
+						hsl.lightness += increment;
+					}
+					$("#col3").html(out);
+				}
+				
+			)
+		</script>
+		
+	</head>
+	<body>
+		
+		<div id="col1" style="float:left"></div>
+		<div id="col2" style="float:left"></div>
+		<div id="col3" style="float:left"></div>
+		
+	</body>
+</html>
