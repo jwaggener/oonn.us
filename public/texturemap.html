@@ -32,7 +32,9 @@
 		<script src="javascript/Detector.js"></script>
 		<script src="javascript/RequestAnimationFrame.js"></script>
 		<script src="javascript/Stats.js"></script>
-
+		
+		<script src="javascript/spectrum.js"></script>
+		
 		<script>
 
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
@@ -42,10 +44,14 @@
 
 			var container,stats;
 
-			var camera, scene, scene2, renderer;
+			var camera, scene, renderer;
+			
+			var zIndex = 0;
 
 			var mouseX = 0, mouseY = 0;
-
+			
+			var colors = [ Utilities.spectrum.red, Utilities.spectrum.orange, Utilities.spectrum.yellow, Utilities.spectrum.green, Utilities.spectrum.blue, Utilities.spectrum.indigo, Utilities.spectrum.violet ];
+			
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
 
@@ -59,12 +65,16 @@
 				document.body.appendChild( container );
 
 				camera = new THREE.PerspectiveCamera( 35, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 5000 );
-				camera.position.z = 1500;
+				camera.position.z = 1000;
+				camera.position.y = 120;
 
 				scene = new THREE.Scene();
 
 				scene.fog = new THREE.Fog( 0x000000, 1500, 4000 );
-
+				
+				//ROTHKO 1
+				rothko01();
+				
 				// PAINTING
 				var callbackPainting = function( image ) {
 
@@ -97,25 +107,10 @@
 
 				};
 				
-				function addPainting2( zscene, zmesh, image ) {
-
-					zmesh.scale.x = image.width / 300;
-					zmesh.scale.y = image.height / 300;
-					
-
-					zscene.add( zmesh );
-
-					//var floorHeight = - 1.117 * image.height/2;
-					//meshCanvas.position.y = meshCanvas2.position.y = floorHeight;
-
-				}
 
 				var texturePainting = THREE.ImageUtils.loadTexture( "textures/iStock_000002372913Medium.jpg", THREE.UVMapping, callbackPainting ),
 					materialPainting = new THREE.MeshBasicMaterial( { color: 0xffffff, map: texturePainting } )
 					
-				var texturePainting2 = THREE.ImageUtils.loadTexture( "textures/catTransparent.png", THREE.UVMapping, callbackPainting2 ),
-					materialPainting2 = new THREE.MeshBasicMaterial( { color: 0xffffff, map: texturePainting2, transparent: true } );
-					materialPainting2.color.setHSV( 1.0, 1.0, 1.0 );
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
@@ -131,11 +126,60 @@
 				stats.domElement.style.zIndex = 100;
 				//container.appendChild( stats.domElement );
 
-				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				//document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
 			}
 
-
+			function rothko01(){
+				
+				var group = new THREE.Object3D();//create an empty container
+				var group2 = new THREE.Object3D();//create an empty container
+				//ROTHKO 1
+				var ground = THREE.ImageUtils.loadTexture( "textures/rothko/canvas.png", THREE.UVMapping );
+				var geometryGround = new THREE.PlaneGeometry( 286, 365 ),
+					materialGround = new THREE.MeshBasicMaterial( { color: 0xffff00, map: ground, transparent: true, opacity: 1 } );
+					
+				var meshGround = new THREE.Mesh( geometryGround, materialGround );
+				meshGround.position.x = 2;
+				meshGround.position.z = 1;
+					
+				var blob1 = THREE.ImageUtils.loadTexture( "textures/rothko/02a-gray.png", THREE.UVMapping ),
+					geometryBlob1 = new THREE.PlaneGeometry( 259, 117 ),
+					materialBlob1 = new THREE.MeshBasicMaterial( { color: 0xffffff, map: blob1, transparent: true, opacity: 1 } );
+					
+				var blob2 = THREE.ImageUtils.loadTexture( "textures/rothko/02b-gray.png", THREE.UVMapping ),
+					geometryBlob2 = new THREE.PlaneGeometry( 271, 241 ),
+					materialBlob2 = new THREE.MeshBasicMaterial( { color: 0xffffff, map: blob2, transparent: true, opacity: 1 } );
+				
+				materialGround.color.setHSV( colors[ Math.floor( Math.random() * colors.length ) ](0), Math.random(), Math.random() );
+				materialBlob1.color.setHSV( colors[ Math.floor( Math.random() * colors.length ) ](0), Math.random(), 1.0 );
+				materialBlob2.color.setHSV( colors[ Math.floor( Math.random() * colors.length ) ](0), 1.0, 1.0 );
+					
+				var meshBlob1 = new THREE.Mesh( geometryBlob1, materialBlob1 );
+				meshBlob1.position.y = 115;
+				meshBlob1.position.z = 2;
+				
+				var meshBlob2 = new THREE.Mesh( geometryBlob2, materialBlob2 );
+				meshBlob2.position.y = -55;
+				meshBlob2.position.z = 3;
+				//meshBlob2.rotation.z = Math.PI/180 * 180;
+					
+				group.add( meshGround );
+				group.add( meshBlob1 );
+				group.add( meshBlob2 );
+				group.position.x = 73;
+				group.position.y = 150;
+				
+				/*group2.add( meshGround );
+				group2.add( meshBlob1 );
+				group2.add( meshBlob2 );*/
+				
+				scene.add( group );
+				//scene.add( group2 );
+				
+				scene.position.y = 100;
+			}
+			
 			function onDocumentMouseMove(event) {
 
 				mouseX = ( event.clientX - windowHalfX );
@@ -155,8 +199,8 @@
 
 			function render() {
 
-				camera.position.x += ( mouseX - camera.position.x ) * .05;
-				camera.position.y += ( - ( mouseY - 200) - camera.position.y ) * .05;
+				//camera.position.x += ( mouseX - camera.position.x ) * .05;
+				//camera.position.y += ( - ( mouseY - 200) - camera.position.y ) * .05;
 
 				camera.lookAt( scene.position );
 

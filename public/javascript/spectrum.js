@@ -2,7 +2,7 @@
 it returns a number in the hue, saturation, value color space
 representing red, orange, yellow, green, blue, indigo, violet
 */
-
+if( !Utilities ){ var Utilities ={}; };
 Utilities.spectrum = {
 	
 	/*0.95 - 0.05*/
