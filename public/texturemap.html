@@ -70,10 +70,13 @@
 
 				scene = new THREE.Scene();
 
-				scene.fog = new THREE.Fog( 0x000000, 1500, 4000 );
+				scene.fog = new THREE.Fog( 0x111100, 150, 3000 );
+				
+				scene.position.y = 100;
 				
 				//ROTHKO 1
 				rothko01();
+				kitty();
 				
 				// PAINTING
 				var callbackPainting = function( image ) {
@@ -133,7 +136,6 @@
 			function rothko01(){
 				
 				var group = new THREE.Object3D();//create an empty container
-				var group2 = new THREE.Object3D();//create an empty container
 				//ROTHKO 1
 				var ground = THREE.ImageUtils.loadTexture( "textures/rothko/canvas.png", THREE.UVMapping );
 				var geometryGround = new THREE.PlaneGeometry( 286, 365 ),
@@ -156,7 +158,7 @@
 				materialBlob2.color.setHSV( colors[ Math.floor( Math.random() * colors.length ) ](0), 1.0, 1.0 );
 					
 				var meshBlob1 = new THREE.Mesh( geometryBlob1, materialBlob1 );
-				meshBlob1.position.y = 115;
+				meshBlob1.position.y = 112;
 				meshBlob1.position.z = 2;
 				
 				var meshBlob2 = new THREE.Mesh( geometryBlob2, materialBlob2 );
@@ -170,14 +172,24 @@
 				group.position.x = 73;
 				group.position.y = 150;
 				
-				/*group2.add( meshGround );
-				group2.add( meshBlob1 );
-				group2.add( meshBlob2 );*/
-				
 				scene.add( group );
-				//scene.add( group2 );
+			}
+			
+			function kitty(){
 				
-				scene.position.y = 100;
+				var group = new THREE.Object3D();//create an empty container
+				//KITTY 1
+				var ground = THREE.ImageUtils.loadTexture( "textures/kitty.png", THREE.UVMapping );
+				var geometryGround = new THREE.PlaneGeometry( 286, 365 ),
+					materialGround = new THREE.MeshBasicMaterial( { color: 0xffff00, map: ground, transparent: true, opacity: 1 } );
+				var meshGround = new THREE.Mesh( geometryGround, materialGround );
+				materialGround.color.setHSV( colors[ Math.floor( Math.random() * colors.length ) ](0), Math.random(.5) + .1, 1 );
+				meshGround.position.x = -402;
+				meshGround.position.y = 150;
+				meshGround.position.z = 4;
+				group.add( meshGround );
+				scene.add( group );
+				
 			}
 			
 			function onDocumentMouseMove(event) {

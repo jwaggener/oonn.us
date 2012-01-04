@@ -1,0 +1,73 @@
+<html> 
+   <head> 
+     <title>Client Flow Example</title> 
+   </head> 
+   <body> 
+   
+	<div id="fb-root"></div>
+	<script>
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId      : '222671394477584',
+			channelUrl : 'http://localhost:3000/channel.html',
+            status     : true, 
+            cookie     : true,
+            xfbml      : true,
+            oauth      : true,
+          });
+		
+		//listen for changes and change out the html appropriately
+		FB.Event.subscribe('auth.authResponseChange', function(response) {
+		  	alert('status change');
+			console.log( 'response', response );
+		});
+
+		//listen for login
+		FB.Event.subscribe('auth.login', function(response) {
+		  	alert('log in');
+			console.log( 'login', login );
+		});
+		
+		//get log in status once facebook inits
+		FB.getLoginStatus(function(response) { 
+			
+			console.log("response", response );
+			
+			FB.api('/me', function(user) { 
+				console.log( "user", user);
+				if (user) {
+					var image = document.getElementById('image');
+		            image.src = 'https://graph.facebook.com/' + user.id + '/picture';
+		            var name = document.getElementById('name');
+		            name.innerHTML = user.name
+				}
+			});
+		});
+		
+        };
+
+        (function(d){
+           var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+           js = d.createElement('script'); js.id = id; js.async = true;
+           js.src = "//connect.facebook.net/en_US/all.js";
+           d.getElementsByTagName('head')[0].appendChild(js);
+         }(document));
+      </script>
+
+	<h2>Example of Facebook Login</h2>
+	
+	<div class="fb-login-button" data-scope="email,user_checkins">
+	        Login with Facebook
+	</div>
+	
+	<div align="center">
+	        <img id="image"/>
+	        <div id="name"></div>
+	      </div>
+	
+	<h2>Example of a Like button liking oonn.us</h2>
+	<iframe src="https://www.facebook.com/plugins/like.php?href=http://www.oonn.us"
+	scrolling="no" frameborder="0"
+	        style="border:none; width:450px; height:80px"></iframe>
+   </body> 
+  </html>
