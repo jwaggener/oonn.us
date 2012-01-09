@@ -43,7 +43,7 @@ window.onload = function() {
         bx = buffer.getContext('2d');
 
         // fill offscreen buffer with the tint color
-        bx.fillStyle = '#FF0000'
+        bx.fillStyle = '#FFFF00'
         bx.fillRect(0,0,buffer.width,buffer.height);
 
         // destination atop makes a result with an alpha channel identical to fg, but with all pixels retaining their original color *as far as I can tell*
@@ -52,11 +52,11 @@ window.onload = function() {
 
 
         // to tint the image, draw it first
-        x.drawImage(fg,0,0);
+        x.drawImage(fg,100,0);
 
         //then set the global alpha to the amound that you want to tint it, and draw the buffer directly on top of it.
         x.globalAlpha = .5;
-        x.drawImage(buffer,0,0);
+        x.drawImage(buffer,100,0);
     }
 }
         </script>

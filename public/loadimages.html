@@ -3,31 +3,90 @@
 		<title></title>
 	</head>
 	<body>
+		<style>
+			body{
+				padding:0;
+				margin:0;
+			}
+			
+			#container{
+				position:relative;
+			}
+			
+			#gallery{
+				margin-top: -198px;
+				margin-left: -150px;
+			}
+			
+			#painting1{
+				position:absolute;
+				top:83px;
+				left:90px;
+			}
+			
+			#painting2{
+				position:absolute;
+				top:83px;
+				left:567px;
+			}
+			
+			#reflection1{
+				position:absolute;
+				top:110px;
+				left:90px;
+			}
+			
+			#reflection2{
+				position:absolute;
+				top:110px;
+				left:567px;
+			}
+			
+		</style>
+		
 		<script src="javascript/libs/jquery-1.6.4.min.js"></script>
-		<script src="javascript/imagesLoader.js"></script>
 		<script>
 			jQuery(function($){ // on page ready
 				
+				var galleryCanvas, context;
+				var galleryImage, painting1, painting2;
 				
-		  		$('div#pix').onImagesLoaded(function(_this){
-					console.log( "all images loaded" );
-		    		//$(_this).fadeIn(10000);
-					
-		  		});
-				$('div#pix').append('<img src="http://images.nationalgeographic.com/wpf/media-live/photos/000/005/cache/domestic-cat_516_600x450.jpg" />');
-		
+				//canvas contexts
+				galleryCanvas = $('#gallery')[0].getContext('2d');
+				if(galleryCanvas.getContext) {
+					context = galleryCanvas.getContext('2d');
+				}
 				
-
-		  		/*$('img#single').onImagesLoaded(function(_img){
-		    		$(_img).fadeIn(3000);
-		  		});*/
+				//create images
+				galleryImage = new Image();
+				
+				//listeners
+				$(galleryImage).bind("load", 
+					function(){ 
+						galleryCanvas.drawImage(galleryImage, 0, 0, 1568, 1224 );
+						$(galleryImage).unbind( "load" );
+					} );
+				
+				//load images
+				galleryImage.src = "textures/gallery.jpg";
+				
+				//test
+				painting1 = $("#painting1")[0].getContext('2d');
+				painting1.fillStyle = "rgb(255,0,0)";
+				painting1.fillRect( 0, 0, 1568, 1224 );
+				
+				painting2 = $("#painting2")[0].getContext('2d');
+				painting2.fillStyle = "rgb(255,250,0)";
+				painting2.fillRect( 0, 0, 1568, 1224 );
 
 			});
 		</script>
-		<div id="pix" >
-			<img src="http://filicio.us/tpss3/files/29157/iapetus_cassini_trailinghem_mosaic_ugar.jpg" />
-			<img src="http://www.animalsw.com/bulkupload/Cats/part2/Very%20Angry%20Cat.jpg" />
-			
+		<div id="container">
+			<canvas id="gallery" width="1568" height="1224" ></canvas>
+			<canvas id="painting1" width="283" height="363" ></canvas>
+			<canvas id="painting2" width="286" height="366" ></canvas>
+			<canvas id="reflection1" width="283" height="363" ></canvas>
+			<canvas id="reflection2" width="286" height="366" ></canvas>
 		</div>
 	</body>
 </html>
