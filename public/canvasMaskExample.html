@@ -86,12 +86,14 @@
 			*/	
 			loadImages(function() {
 				output.globalCompositeOperation = "lighter";
+				console.log( images['base'] );
+				console.log( images['alpha'] );
 				output.putImageData(
-					applyCanvasMask(images['base'], images['alpha'], width, height), 0, 0, 0, 0, width, height
+					applyCanvasMask(images['base'], images['alpha'], width, height), 0, 0//, 0, 0, width, height
 				);
-				outputCanvas.className = "rotate";
+				//outputCanvas.className = "rotate";
 				
-				$('body').css({'background-image': 'url(' + applyCanvasMask(images['base'], images['alpha'], width, height, true) + ')'});
+				//$('body').css({'background-image': 'url(' + applyCanvasMask(images['base'], images['alpha'], width, height, true) + ')'});
 			});
 			
 			/**
