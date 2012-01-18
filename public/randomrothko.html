@@ -1,0 +1,400 @@
+<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+		<style>
+			body{
+				padding:0;
+				margin:0;
+			}
+			
+			#container{
+				position:relative;
+			}
+			
+			#gallery{
+				margin-top: -198px;
+				margin-left: -150px;
+			}
+			
+			#painting1{
+				position:absolute;
+				top:81px;
+				left:89px;
+			}
+			
+			#painting2{
+				position:absolute;
+				top:83px;
+				left:567px;
+			}
+			
+			#reflection1{
+				position:absolute;
+				top:540px;
+				left:90px;
+				/* for firefox, safari, chrome, etc. */
+				-moz-transform: scaleX(-1);
+				-o-transform: scaleX(-1);
+				-webkit-transform: scaleX(-1);
+				transform: scaleX(-1);
+				filter: FlipH;
+				-ms-filter: "FlipH";
+				-moz-transform: scaleY(-1);
+				-webkit-transform: scaleY(-1);
+				-o-transform: scaleY(-1);
+				transform: scaleY(-1);
+				filter: flipv; /*IE*/
+			}
+			
+			#reflection2{
+				position:absolute;
+				top:540;
+				left:567px;
+				/* for firefox, safari, chrome, etc. */
+				-moz-transform: scaleX(-1);
+				-o-transform: scaleX(-1);
+				-webkit-transform: scaleX(-1);
+				transform: scaleX(-1);
+				filter: FlipH;
+				-ms-filter: "FlipH";
+				-moz-transform: scaleY(-1);
+				-webkit-transform: scaleY(-1);
+				-o-transform: scaleY(-1);
+				transform: scaleY(-1);
+				filter: flipv; /*IE*/
+			}
+			
+		</style>
+		
+		<script src="javascript/libs/jquery-1.6.4.min.js"></script>
+		<script src="javascript/canvasMask.js"></script>
+		<script src="javascript/color.js"></script>
+		<script src="javascript/spectrum.js"></script>
+		<script src="javascript/rothko2.js"></script>
+		
+		<script>
+			function getUrlVars()
+			{
+			    var vars = {}, hash;
+			    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+			    for(var i = 0; i < hashes.length; i++)
+			    {
+			        hash = hashes[i].split('=');
+			        vars[ hash[0] ] = hash[1];
+			    }
+			    return vars;
+			}
+			var URLvars = getUrlVars();
+			var shareURL = "http://localhost:3000/loadimages.html";
+			//alert(document.domain);
+			
+		</script>
+		<!-- scripts for creating a tinted image-->
+		<script>
+			function generateRGBKs( img ) {
+				var w = img.width;
+				var h = img.height;
+				var rgbks = [];
+
+				var canvas = document.createElement("canvas");
+				canvas.width = w;
+				canvas.height = h;
+
+				var ctx = canvas.getContext("2d");
+				ctx.drawImage( img, 0, 0 );
+
+				var pixels = ctx.getImageData( 0, 0, w, h ).data;
+
+				// 4 is used to ask for 3 images: red, green, blue and
+				// black in that order.
+				for ( var rgbI = 0; rgbI < 4; rgbI++ ) {
+					var canvas = document.createElement("canvas");
+					canvas.width  = w;
+			  		canvas.height = h;
+
+					var ctx = canvas.getContext('2d');
+					ctx.drawImage( img, 0, 0 );
+					var to = ctx.getImageData( 0, 0, w, h );
+					var toData = to.data;
+
+					for (
+						var i = 0, len = pixels.length;
+						i < len;
+						i += 4
+					) {
+						toData[i  ] = (rgbI === 0) ? pixels[i  ] : 0;
+			 			toData[i+1] = (rgbI === 1) ? pixels[i+1] : 0;
+						toData[i+2] = (rgbI === 2) ? pixels[i+2] : 0;
+						toData[i+3] =                pixels[i+3]    ;
+					}
+
+					ctx.putImageData( to, 0, 0 );
+
+					// image is _slightly_ faster then canvas for this, so convert
+					//john.waggener@gmail.com - this convesion was causing it not to work in certain contexts don't know why.
+					//var imgComp = new Image();
+					//imgComp.src = canvas.toDataURL();
+
+					rgbks.push( canvas );
+				}
+
+				return rgbks;
+			}
+			
+			//returns a canvas object
+			function generateTintImage( img, rgbks, red, green, blue ) {
+				
+				var buff = document.createElement( "canvas" );
+				buff.width  = img.width;
+				buff.height = img.height;
+
+				var ctx2  = buff.getContext("2d");
+
+				ctx2.globalAlpha = 1;
+				ctx2.globalCompositeOperation = 'copy';
+				ctx2.drawImage( rgbks[3], 0, 0 );
+
+				ctx2.globalCompositeOperation = 'lighter';
+				
+				if ( red > 0 ) {
+					ctx2.globalAlpha = red   / 255.0;
+					ctx2.drawImage( rgbks[0], 0, 0 );
+					}
+				if ( green > 0 ) {
+					ctx2.globalAlpha = green / 255.0;
+					ctx2.drawImage( rgbks[1], 0, 0 );
+					}
+				if ( blue > 0 ) {
+					ctx2.globalAlpha = blue  / 255.0;
+					ctx2.drawImage( rgbks[2], 0, 0 );
+					}
+
+				return buff;
+			}
+		</script>
+		
+		<script>
+			jQuery(function($){
+				
+					var colors = [ Utilities.spectrum.red, Utilities.spectrum.orange, Utilities.spectrum.yellow, Utilities.spectrum.green, Utilities.spectrum.blue, Utilities.spectrum.indigo, Utilities.spectrum.violet ];
+				
+				window.kitty1 = {};
+				window.kitty1.total = 3;
+				window.kitty1.loadImages = function(){
+				window.kitty1.kittyImage
+				window.kitty1.mask
+				window.kitty1.reflectionMask
+				
+				var kittyImages = [ "textures/kitty.png", "textures/kitten2.png", "textures/duck.png" ];
+				
+				window.kitty1.kittyImage = new Image();
+				window.kitty1.kittyImage.onload = window.kitty1.imagesLoaded;
+				var r = Math.floor( Math.random() * kittyImages.length );
+				window.kitty1.kittyImage.src = kittyImages[ r ];
+				console.log( "r", r );
+				console.log( window.kitty1.kittyImage.src );
+				
+				window.kitty1.mask = new Image();
+				window.kitty1.mask.onload = window.kitty1.imagesLoaded;
+				window.kitty1.mask.src = "textures/canvasShape01.png";
+				
+				window.kitty1.reflectionMask = new Image();
+				window.kitty1.reflectionMask.onload = window.kitty1.imagesLoaded;
+				window.kitty1.reflectionMask.src = "textures/concreteFloor.png";
+				
+			}
+			window.kitty1.imagesLoaded = function(){
+				if( !window.kitty1.i ){
+					 window.kitty1.i = 1
+				}else{
+					window.kitty1.i++;
+				}
+				if( window.kitty1.i == window.kitty1.total ){
+					window.kitty1.render();
+				}
+			}
+			window.kitty1.render = function(){
+
+				var kittyColor;
+				kittyColor = colors[ Math.floor( Math.random() * colors.length ) ](0);
+				
+				window.kitty1.kittyColor = Utilities.colorUtils.hslToRgb( kittyColor, Math.random(), .5 );
+				
+				var rgbks = generateRGBKs( window.kitty1.kittyImage );
+				var tintImg = generateTintImage( window.kitty1.kittyImage, rgbks, window.kitty1.kittyColor.r * 255, window.kitty1.kittyColor.g * 255, window.kitty1.kittyColor.b * 255 );//returns a canvas object
+
+				var canvas = $("#painting1")[0];
+				var ctx = canvas.getContext("2d");
+
+				var masked = applyCanvasMask( tintImg, window.kitty1.mask, 283, 363);//returns data
+				ctx.putImageData( masked, 0, 0 );
+				
+				var reflectionMasked = applyCanvasMask( canvas, window.kitty1.reflectionMask, 283, 375);//returns data
+				ctx = $("#reflection1")[0].getContext('2d');
+				ctx.putImageData( reflectionMasked, 0, 0 );
+			}
+			
+			window.rothko01 = {};
+			window.rothko01.total = 6;
+			window.rothko01.loadImages = function(){
+				
+				window.rothko01.ground;
+				window.rothko01.blob1;
+				window.rothko01.blob2;
+				window.rothko01.blob3;
+				window.rothko01.mask2;
+				window.rothko01.painting2mask;
+				
+				window.rothko01.ground = new Image();
+				window.rothko01.ground.onload = window.rothko01.imagesLoaded;
+				window.rothko01.ground.src = "textures/rothko/painting1Ground.png";
+				
+				window.rothko01.blob1 = new Image();
+				window.rothko01.blob1.onload = window.rothko01.imagesLoaded;
+				window.rothko01.blob1.src = "textures/rothko/painting1blob1.png";
+				
+				window.rothko01.blob2 = new Image();
+				window.rothko01.blob2.onload = window.rothko01.imagesLoaded;
+				window.rothko01.blob2.src = "textures/rothko/painting1blob2.png";
+				
+				window.rothko01.blob3 = new Image();
+				window.rothko01.blob3.onload = window.rothko01.imagesLoaded;
+				window.rothko01.blob3.src = "textures/rothko/01c.png";
+				
+				window.rothko01.mask2 = new Image();
+				window.rothko01.mask2.onload = window.rothko01.imagesLoaded;
+				window.rothko01.mask2.src = "textures/mask2.png";
+				
+				window.rothko01.painting2mask = new Image();
+				window.rothko01.painting2mask.onload = window.rothko01.imagesLoaded;
+				window.rothko01.painting2mask.src = "textures/painting2mask.png";
+				
+			}
+			
+			window.rothko01.imagesLoaded = function( result ){
+				
+				if( !window.rothko01.i ){
+					 window.rothko01.i = 1
+				}else{
+					window.rothko01.i++;
+				}
+				if( window.rothko01.i == window.rothko01.total ){
+					window.rothko01.render();
+				}
+			}
+			
+			window.rothko01.render = function(){
+				
+				var ground, color1, color2, color3;
+				ground = colors[ Math.floor( Math.random() * colors.length ) ](0);
+				color1 = colors[ Math.floor( Math.random() * colors.length ) ](0);
+				color2 = colors[ Math.floor( Math.random() * colors.length ) ](0);
+				
+				window.rothko01.groundColor = Utilities.colorUtils.hslToRgb( ground, 1, .2 + ( Math.random() * .5 ) );
+				window.rothko01.blobColor1 = Utilities.colorUtils.hslToRgb( color1, 1, .5 );
+				window.rothko01.blobColor2 = Utilities.colorUtils.hslToRgb( color2, 1, Math.random() );
+				
+				var painting2 = $("#painting2")[0];
+				var ctx = painting2.getContext("2d");
+				var rgbks;
+				
+				rgbks = generateRGBKs( window.rothko01.ground );
+				window.rothko01.groundtint = generateTintImage( window.rothko01.ground, rgbks, window.rothko01.groundColor.r * 255, window.rothko01.groundColor.g * 255, window.rothko01.groundColor.b * 255 );//returns a canvas object
+				
+				rgbks = generateRGBKs( window.rothko01.blob1 );
+				window.rothko01.blob1tint = generateTintImage( window.rothko01.blob1, rgbks, window.rothko01.blobColor1.r * 255, window.rothko01.blobColor1.g * 255, window.rothko01.blobColor1.b * 255 );//returns a canvas object
+				
+				rgbks = generateRGBKs( window.rothko01.blob2 );
+				window.rothko01.blob2tint = generateTintImage( window.rothko01.blob2, rgbks, window.rothko01.blobColor2.r * 255, window.rothko01.blobColor2.g * 255, window.rothko01.blobColor2.b * 255 );//returns a canvas object
+				
+				var str = "rgb("+Math.floor(window.rothko01.groundColor.r*255)+","+Math.floor(window.rothko01.groundColor.g*255)+","+Math.floor(window.rothko01.groundColor.b*255)+")";
+				ctx.fillStyle = str;
+				ctx.fillRect( 0, 0, 283, 364 );
+				
+				//ctx.drawImage( window.rothko01.groundtint, 0, 0 );
+
+				ctx.drawImage( window.rothko01.blob1tint, 10, 7 );
+				ctx.drawImage( window.rothko01.blob1tint, 10, 7 );
+				ctx.drawImage( window.rothko01.blob1tint, 10, 7 );
+				
+				ctx.drawImage( window.rothko01.blob2tint, 13, 165 );
+				ctx.drawImage( window.rothko01.blob2tint, 13, 165 );
+				
+				
+				var painting2mask = applyCanvasMask( painting2, window.rothko01.painting2mask, 283, 375);//returns data
+				ctx.putImageData( painting2mask, 0, 0 );
+				
+				var masked = applyCanvasMask( painting2, window.rothko01.mask2, 283, 375);//returns data
+				ctx = $("#reflection2")[0].getContext('2d');
+				ctx.putImageData( masked, 0, 0 );
+				
+			}
+			
+		})
+			
+		</script>
+		
+		<script>
+			jQuery(function($){ // on page ready
+				
+				var galleryCanvas, context;
+				var galleryImage, painting2;
+				
+				//canvas contexts
+				galleryCanvas = $('#gallery')[0].getContext('2d');
+				if(galleryCanvas.getContext) {
+					context = galleryCanvas.getContext('2d');
+				}
+				
+				//create images
+				galleryImage = new Image();
+				
+				//listeners
+				$(galleryImage).bind("load", 
+					function(){ 
+						galleryCanvas.drawImage(galleryImage, 0, 0, 1568, 1224 );
+						$(galleryImage).unbind( "load" );
+					} );
+				
+				//load images
+				galleryImage.src = "textures/gallery.jpg";
+				
+				var paintings = [ "painting1", "painting2" ];
+				var p = ( URLvars["painting"] != undefined ) ? URLvars["painting"] : paintings[ Math.floor( Math.random() * paintings.length ) ];
+				var paintingToUse;
+				
+				function go(){
+					switch( p ){
+						
+						case( "painting2" ):
+						paintingToUse = window.rothko02;
+						break;
+						
+						default:
+						paintingToUse = window.rothko01;
+						
+					}
+					paintingToUse.loadImages();
+					window.kitty1.loadImages();
+				}
+				
+				
+				
+				go();
+				
+				$("body").bind( "click", function(){ window.kitty1.render(); window.rothko01.render(); } );
+
+			});
+		</script>
+		
+		<div id="container">
+			<canvas id="gallery" width="1568" height="1224" ></canvas>
+			<canvas id="painting1" width="283" height="363" ></canvas>
+			<canvas id="painting2" width="286" height="366" ></canvas>
+			<canvas id="reflection1" width="283" height="363" ></canvas>
+			<canvas id="reflection2" width="286" height="366" ></canvas>
+		</div>
+	</body>
+</html>
