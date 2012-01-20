@@ -75,6 +75,7 @@
 		<script src="javascript/spectrum.js"></script>
 		<script src="javascript/rothko2.js"></script>
 		<script src="javascript/rothko3.js"></script>
+		<script src="javascript/rothko4.js"></script>
 		
 		<script>
 			function getUrlVars()
@@ -363,12 +364,16 @@
 				//load images
 				galleryImage.src = "textures/gallery.jpg";
 				
-				var paintings = [ "painting1", "painting2", "painting3" ];
+				var paintings = [ "painting1", "painting2", "painting3", "painting4" ];
 				var p = ( URLvars["painting"] != undefined ) ? URLvars["painting"] : paintings[ Math.floor( Math.random() * paintings.length ) ];
 				var paintingToUse;
 				
 				function go(){
 					switch( p ){
+						
+						case( "painting4" ):
+						paintingToUse = window.rothko04;
+						break;
 						
 						case( "painting3" ):
 						paintingToUse = window.rothko03;
@@ -385,8 +390,6 @@
 					paintingToUse.loadImages();
 					window.kitty1.loadImages();
 				}
-				
-				
 				
 				go();
 				
