@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <script src="state-machine.js" type="text/javascript"></script>
+    <style>
+      .quarterOpacity{
+        opacity: .25;
+      }
+      .circle{
+        min-width: 100px;
+        width: 100px;
+        min-height: 100px;
+        border-radius: 50px;
+        margin: 15px;
+      }
+      .gray{
+        background-color: black ;
+      }
+      .green{
+        background-color: green ;
+      }
+      .yellow{
+        background-color: yellow;
+      }
+      .red{
+        background-color: red ;
+      }
+    </style>
+  </head>
+  <body class="gray" >
+    <div id="red" class="circle red" ></div>
+    <div id="yellow" class="circle yellow quarterOpacity" ></div>
+    <div id="green" class="circle green quarterOpacity" ></div>
+    
+    <script>
+      var redLight = document.getElementById("red"); 
+      var yellowLight = document.getElementById("yellow"); 
+      var greenLight = document.getElementById("green");
+      
+      var onGreen = function(){
+        redLight.className = "circle red quarterOpacity";
+        yellowLight.className = "circle yellow quarterOpacity";
+        greenLight.className = "circle green";
+      }
+      var onYellow = function(){
+        redLight.className = "circle red quarterOpacity";
+        yellowLight.className = "circle yellow";
+        greenLight.className = "circle green quarterOpacity";
+      }
+      var onRed = function(){
+        redLight.className = "circle red";
+        yellowLight.className = "circle yellow quarterOpacity";
+        greenLight.className = "circle green quarterOpacity";
+      }
+      var fsm = StateMachine.create({
+        initial: 'green',
+        events: [
+          { name: 'slow',  from: 'green',  to: 'yellow' },
+          { name: 'stop', from: 'yellow', to: 'red'    },
+          { name: 'go', from: 'red', to: 'green'  }
+          ],
+        callbacks: {
+          ongreen:  onGreen,
+          onyellow: onYellow,
+          onred:    onRed
+        }
+      });
+      
+      var redLightClick = function( e ){
+        fsm.stop();
+      }
+      var yellowLightClick = function( e ){
+        fsm.slow();
+      }
+      var greenLightClick = function( e ){
+        fsm.go();
+      }
+      redLight.addEventListener( "click", redLightClick );
+      yellowLight.addEventListener( "click", yellowLightClick );
+      greenLight.addEventListener( "click", greenLightClick );
+    </script>
+    
+  </body>
+</html>
