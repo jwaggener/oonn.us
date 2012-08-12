@@ -36,9 +36,15 @@
 				window.location = "bb3d.html";
 			} );
 			
+			$( "#statemachine" ).bind( 'click', function( event ){
+				window.location = "statemachine-minimalist.html";
+			} )
+			
 			$( "#blog" ).bind( 'click', function( event ){
 				window.location = "http://falsestart02.blogspot.com/";
 			} )
+			
+			
 			
 		})
     </script>
@@ -48,6 +54,8 @@
 	<h1>Test Projects by Johnny</h1>
 	<button id="blog" >Blog</button>
 	<br />
-    <button id="bb3d" >A Simple of Example of Using Backbone.js and Three.js</button>
+  <button id="bb3d" >A Simple of Example of Using Backbone.js and Three.js</button>
+  <br />
+  <button id="statemachine" >Minimalist State Machine</button>
   </body>
 </html>
