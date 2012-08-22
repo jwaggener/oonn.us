@@ -1,0 +1,26 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <script src="underscore.js"></script>
+    <script src="locales.js"></script>
+    <script src="en-us.js"></script>
+    <script src="es-mx.js"></script>
+    <div id="content"></div>
+    <button onClick='display("en-us")'>English</button><button onClick='display("es-mx")'>Spanish</button>
+    <script>
+      console.log(locales);
+      //add the languages
+      locales.getInstance().addLanguage( en_us );
+      locales.getInstance().addLanguage( es_mx );
+      //define a template; the template uses the locale.translate method to insert locale-specific text
+      var template = "<h1><%=locales.getInstance().translate( 'heading', locale )%></h1><div><%=locales.getInstance().translate( 'content', locale )%></div>"
+      //for illustration. used by the buttons
+      function display( lang ){
+        document.getElementById("content").innerHTML = _.template( template, { locale: lang } );
+      }
+      //display a language
+      display( "en-us" );
+    </script>
+  </body>
+</html>
