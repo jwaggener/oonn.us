@@ -1,0 +1,9 @@
+body{
+  background-color: #ccc;
+}
+.hide{
+  display: none;
+}
+.show{
+  display: block;
+}
