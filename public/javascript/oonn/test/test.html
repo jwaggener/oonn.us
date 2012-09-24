@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>Colors Test Runner</title>
+
+  <!-- require.js -->
+  <script type="text/javascript" src="../lib/require.js"></script>
+  
+  <!-- jasmine test suite -->
+  <link rel="stylesheet" type="text/css" href="../lib/jasmine-core/jasmine.css">
+  <script type="text/javascript" src="../lib/jasmine-core/jasmine.js"></script>
+  <script type="text/javascript" src="../lib/jasmine-core/jasmine-html.js"></script>
+  
+  
+
+  <script type="text/javascript">
+  
+    require.config({
+      baseUrl: '../src',
+      tonal: "/javascripts/oonn/src/colors/tonal"
+    });
+    
+    require([ "colors/tonal" ], function( Tonal ){ 
+      
+      window.tonal = Tonal.getInstance();
+      console.log( "window.tonal", window.tonal ); 
+    
+    var jasmineEnv = jasmine.getEnv();
+    jasmineEnv.updateInterval = 1000;
+    
+    var trivialReporter = new jasmine.TrivialReporter();
+    
+    jasmineEnv.addReporter(trivialReporter);
+    
+    jasmineEnv.specFilter = function(spec) {
+      return trivialReporter.specFilter(spec);
+    };
+    
+    //execJasmine();
+    
+    var currentWindowOnload = window.onload;
+    
+    window.onload = function () {
+		  if (currentWindowOnload) {
+			  currentWindowOnload();
+			}
+			execJasmine();
+		};
+
+		function execJasmine() {
+		  jasmineEnv.execute();
+		}
+    
+    } );
+    
+    /*(function() {
+      
+      var jasmineEnv = jasmine.getEnv();
+      jasmineEnv.updateInterval = 1000;
+
+      var trivialReporter = new jasmine.TrivialReporter();
+
+      jasmineEnv.addReporter(trivialReporter);
+
+      jasmineEnv.specFilter = function(spec) {
+        return trivialReporter.specFilter(spec);
+      };
+
+      var currentWindowOnload = window.onload;
+
+      window.onload = function() {
+        if (currentWindowOnload) {
+          currentWindowOnload();
+        }
+        execJasmine();
+      };
+
+      function execJasmine() {
+        jasmineEnv.execute();
+      }
+
+    })();*/
+  </script>
+  
+  <!-- include spec files here... -->
+    <script type="text/javascript" src="colors/tonal.js"></script>
+
+</head>
+
+<body>
+</body>
+</html>
