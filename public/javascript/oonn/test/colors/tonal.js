@@ -4,14 +4,16 @@ describe('tonal', function() {
   
   beforeEach(function() {
     tonal = window.tonal;
-    console.log( "in beforeEach window.tonal",  window.tonal );
-    console.log( "window.tonal",  window.tonal );
   });
   
-  it( "a Spec", function(){
-    console.log( "tonal.dark", tonal.dark );
-    console.log( "here we are in a spec" );
+  it( "Random Tone randomTone( flr, ceil ) - Should return a Value between Floor and Ceiling", function(){
+    var flr, ceil;
+    var val;
+    flr = 0;
+    ceil = 1;
+    val = tonal.randomTone( flr, ceil );
+    expect(val).toBeGreaterThan(flr);
+    expect(val).toBeLessThan(ceil);
   } )
-  
   
 });
