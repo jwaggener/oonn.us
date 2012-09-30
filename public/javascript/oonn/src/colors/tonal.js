@@ -1,5 +1,5 @@
 /*
-  a singleton class dealing with tonality
+  a singleton class dealing with tonality in the HSL, Hue, Saturation, Lighness color model
 */
 define([], function(){
   
