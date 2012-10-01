@@ -19,11 +19,13 @@
       tonal: "/javascripts/oonn/src/colors/tonal"
     });
     
-    require([ "colors/tonal", "colors/spectrum" ], function( Tonal, Spectrum ){ 
+    require([ "colors/tonal", "colors/spectrum", "colors/conversions" ], function( Tonal, Spectrum, Conversions ){ 
       
       window.tonal = Tonal.getInstance();
       
       window.spectrum = Spectrum.getInstance();
+      
+      window.conversions = Conversions.getInstance();
     
       var jasmineEnv = jasmine.getEnv();
       jasmineEnv.updateInterval = 1000;
@@ -58,6 +60,7 @@
   <!-- include spec files here... -->
   <script type="text/javascript" src="colors/tonal.js"></script>
   <script type="text/javascript" src="colors/spectrum.js"></script>
+  <script type="text/javascript" src="colors/conversions.js"></script>
 
 </head>
 

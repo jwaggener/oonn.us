@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Testing my extension to the document's image object</title>
+    <script type="text/javascript" src="/javascript/oonn/src/DOMextensions/image.js"></script>
+  </head>
+  <body>
+    <img src="/images/minimal.jpg" />
+    <div id="stuff" ></div>
+    <script>
+      var i = new Image();
+      console.log( "i", i );
+      i.onload = iloaded;
+      i.src = "/images/marilyn.jpg";
+      function iloaded(){
+        console.log( "i loaded" );
+        i.rgbks();
+      }
+    </script>
+  </body>
+</html>
