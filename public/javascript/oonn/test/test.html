@@ -7,6 +7,9 @@
   <!-- require.js -->
   <script type="text/javascript" src="../lib/require.js"></script>
   
+  <!-- underscore.js -->
+  <script type="text/javascript" src="../lib/underscore.js"></script>
+  
   <!-- jasmine test suite -->
   <link rel="stylesheet" type="text/css" href="../lib/jasmine-core/jasmine.css">
   <script type="text/javascript" src="../lib/jasmine-core/jasmine.js"></script>
@@ -19,13 +22,18 @@
       tonal: "/javascripts/oonn/src/colors/tonal"
     });
     
-    require([ "colors/tonal", "colors/spectrum", "colors/conversions" ], function( Tonal, Spectrum, Conversions ){ 
+    require([ "colors/tonal", "colors/spectrum", "colors/conversions", "class/class", "graphics/canvas" ], function( Tonal, Spectrum, Conversions, Class, Canvas ){ 
       
       window.tonal = Tonal.getInstance();
       
       window.spectrum = Spectrum.getInstance();
       
       window.conversions = Conversions.getInstance();
+      
+      window.extend = Class;
+      
+      window.Canvas = Canvas;
+      console.log( "Canvas", Canvas );
     
       var jasmineEnv = jasmine.getEnv();
       jasmineEnv.updateInterval = 1000;
@@ -61,6 +69,8 @@
   <script type="text/javascript" src="colors/tonal.js"></script>
   <script type="text/javascript" src="colors/spectrum.js"></script>
   <script type="text/javascript" src="colors/conversions.js"></script>
+  <script type="text/javascript" src="class/class.js"></script>
+  <script type="text/javascript" src="graphics/canvas.js"></script>
 
 </head>
 
