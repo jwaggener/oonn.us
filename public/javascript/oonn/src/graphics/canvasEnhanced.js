@@ -85,8 +85,8 @@ define([
       var canvas, context, imgData, toData;
       
       canvas = this.canvas; //document.createElement("canvas");
-      canvas.width = img.width/2;
-	    canvas.height = img.height/2;
+      canvas.width = img.width;
+	    canvas.height = img.height;
 	    context = canvas.getContext("2d");
 	    context.drawImage( img, 0, 0 );
 	    
@@ -96,9 +96,9 @@ define([
       // invert colors
       for (var i=0;i<imgData.data.length;i+=4){
         //imgData.data[i+channel]=val;
-        toData.data[i]=imgData.data[i]/5;
-        toData.data[i+1]=imgData.data[i+1]/5;
-        toData.data[i+2]=imgData.data[i+2]/5;
+        toData.data[i]=imgData.data[i];
+        toData.data[i+1]=imgData.data[i+1];
+        toData.data[i+2]=imgData.data[i+2];
         toData.data[i+3]=255;
       }
       context.putImageData(toData,0,0);
