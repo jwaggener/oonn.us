@@ -1,9 +1,6 @@
 describe( "canvasEnhanced", function(){
   
   var CanvasEnhanced;
-  var cur = 255;
-  var interval = -1;
-  var target;
   
   beforeEach( function(){
     CanvasEnhanced = window.CanvasEnhanced;
@@ -29,20 +26,12 @@ describe( "canvasEnhanced", function(){
   it("inverts the colors in an image", function(){
     var img = document.getElementById("cat");
     var enhanced = new CanvasEnhanced();
-    var c = enhanced.invert( img, 0, 10 );
-    console.log( "enhancedSet", enhancedSet );
-    window.setInterval( enhancedSet, 10 );
+    var c = enhanced.invert( img );
+    
+    var c = enhanced.adjustChannel( img, null, 50 );
+    
     document.getElementById("stuff").appendChild( c );
   })
-  
-  var enhancedSet = function(){
-    console.log( "enhanced", enhanced );
-    var img = document.getElementById("cat");
-    var enhanced = new CanvasEnhanced();
-    var c = enhanced.invert( img, 3, cur, target );
-    if( target == undefined ){ target = c; }
-    cur = cur + interval;
-    if( c ) { document.getElementById("stuff").appendChild( c ) };
-  }
+
   
 })

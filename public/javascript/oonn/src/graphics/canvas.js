@@ -17,6 +17,9 @@ define([
       
       initialize: function(){
         this.canvas = ( !( document.createElement("canvas").getContext ) ) ? undefined : document.createElement("canvas");
+        /* if a canvas is inited with data from an image object, the image data is saved */
+        /* image data consists of a height, a width, and an array of values - every grouping of 4 values represents the red, green, blue, and alpha values of a single pixel */
+        this.origImgData;
       }
       
     }); 

@@ -55,10 +55,9 @@ define([
       return rgbks;
     },
     
-    invert: function( img, channel, val, target ){
-      //so if its alpha, it's 0 -255
+    invert: function( img ){
       
-      var canvas, context, imgData, pixels, to, toData, rgbks;
+      var canvas, context, imgData;
       
       canvas = document.createElement("canvas");
       canvas.width = img.width;
@@ -67,25 +66,43 @@ define([
 	    context.drawImage( img, 0, 0 );
 	    
 	    imgData = context.getImageData( 0, 0, img.width, img.height );
+      console.log( "imgData", imgData );
+      // invert colors
+      for (var i=0;i<imgData.data.length;i+=4){
+        imgData.data[i]=255-imgData.data[i];
+        imgData.data[i+1]=255-imgData.data[i+1];
+        imgData.data[i+2]=255-imgData.data[i+2];
+        imgData.data[i+3]=255;
+      }
+      
+      context.putImageData(imgData,0,0);
+      return canvas;
+      
+    },
+    
+    adjustChannel: function( img, channel, val, target ){
+      
+      var canvas, context, imgData, toData;
+      
+      canvas = this.canvas; //document.createElement("canvas");
+      canvas.width = img.width/2;
+	    canvas.height = img.height/2;
+	    context = canvas.getContext("2d");
+	    context.drawImage( img, 0, 0 );
+	    
+	    imgData = context.getImageData( 0, 0, img.width, img.height );
+	    toData = context.getImageData( 0, 0, img.width, img.height );//output
       
       // invert colors
       for (var i=0;i<imgData.data.length;i+=4){
-        /*imgData.data[i]=255-imgData.data[i];
-        imgData.data[i+1]=255-imgData.data[i+1];
-        imgData.data[i+2]=255-imgData.data[i+2];
-        imgData.data[i+3]=255;*/
-        
-        imgData.data[i+channel]=val;
-        
+        //imgData.data[i+channel]=val;
+        toData.data[i]=imgData.data[i]/5;
+        toData.data[i+1]=imgData.data[i+1]/5;
+        toData.data[i+2]=imgData.data[i+2]/5;
+        toData.data[i+3]=255;
       }
-      
-      if( target ){
-        context = target.getContext("2d");
-        context.putImageData(imgData,0,0);
-      }else{
-        context.putImageData(imgData,0,0);
-        return canvas;
-      }
+      context.putImageData(toData,0,0);
+      return canvas;
       
     }
     
