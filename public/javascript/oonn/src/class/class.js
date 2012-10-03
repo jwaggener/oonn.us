@@ -18,7 +18,6 @@ define([], function(){
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // class properties to be extended.
   var inherits = function(parent, protoProps, staticProps) {
-    console.log("inherits");
     var child;
 
     // The constructor function for the new subclass is either defined by you
@@ -32,8 +31,6 @@ define([], function(){
 
     // Inherit class (static) properties from parent.
     _.extend(child, parent);
-    console.log( "parent", parent );
-    console.log( "child", child );
 
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
