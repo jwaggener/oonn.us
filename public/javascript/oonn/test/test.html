@@ -22,7 +22,7 @@
       tonal: "/javascripts/oonn/src/colors/tonal"
     });
     
-    require([ "colors/tonal", "colors/spectrum", "colors/conversions", "class/class", "graphics/canvas" ], function( Tonal, Spectrum, Conversions, Class, Canvas ){ 
+    require([ "colors/tonal", "colors/spectrum", "colors/conversions", "class/class", "graphics/canvas", "graphics/canvasEnhanced" ], function( Tonal, Spectrum, Conversions, Class, Canvas, CanvasEnhanced ){ 
       
       window.tonal = Tonal.getInstance();
       
@@ -33,7 +33,8 @@
       window.extend = Class;
       
       window.Canvas = Canvas;
-      console.log( "Canvas", Canvas );
+      
+      window.CanvasEnhanced = CanvasEnhanced;
     
       var jasmineEnv = jasmine.getEnv();
       jasmineEnv.updateInterval = 1000;
@@ -71,9 +72,11 @@
   <script type="text/javascript" src="colors/conversions.js"></script>
   <script type="text/javascript" src="class/class.js"></script>
   <script type="text/javascript" src="graphics/canvas.js"></script>
+  <script type="text/javascript" src="graphics/canvasEnhanced.js"></script>
 
 </head>
-
+  <img id="cat" src="cat.jpg">
+  <div id="stuff"></div>
 <body>
 </body>
 </html>

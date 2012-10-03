@@ -8,15 +8,16 @@ define([
   ], function( Extend ){
     
     var Canvas = function( img ){
-      this.extend = Extend;
       this.initialize.apply(this, arguments);
     }
+    
+    Canvas.extend = Extend;// mixin classical style inheritance
     
     _.extend( Canvas.prototype, {
       
       initialize: function(){
-        this.canvas = document.createElement("canvas");
-      },
+        this.canvas = ( !( document.createElement("canvas").getContext ) ) ? undefined : document.createElement("canvas");
+      }
       
     }); 
     
