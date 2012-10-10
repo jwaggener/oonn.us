@@ -12,4 +12,10 @@ describe( 'canvas', function(){
     expect( canvas.canvas.getContext ).toBeDefined();
   });
   
+  it( "if an image or a canvas is passed, the image data should be stored in the var, origImgData", function(){
+    var c = document.createElement("canvas");
+    var canvas = new Canvas( c );
+    expect(canvas.origImgData).toBeDefined();
+  });
+  
 })

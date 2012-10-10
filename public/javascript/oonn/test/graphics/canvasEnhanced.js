@@ -28,10 +28,20 @@ describe( "canvasEnhanced", function(){
     var enhanced = new CanvasEnhanced();
     var c = enhanced.invert( img );
     
-    var c = enhanced.adjustChannel( img, null, 50 );
+    var c = enhanced.invert( img );
     
     document.getElementById("stuff").appendChild( c );
   })
+  
+  /*it("adjusts a specified channel -r, g, b, or alpha", function(){
+    var img = document.getElementById("cat");
+    var enhanced = new CanvasEnhanced();
+    var c = enhanced.invert( img );
+    
+    var c = enhanced.adjustChannel( img, null, 50 );
+    
+    document.getElementById("stuff").appendChild( c );
+  })*/
 
   
 })

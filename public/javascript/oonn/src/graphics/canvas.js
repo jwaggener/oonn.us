@@ -15,11 +15,27 @@ define([
     
     _.extend( Canvas.prototype, {
       
-      initialize: function(){
+      initialize: function( ){
         this.canvas = ( !( document.createElement("canvas").getContext ) ) ? undefined : document.createElement("canvas");
         /* if a canvas is inited with data from an image object, the image data is saved */
         /* image data consists of a height, a width, and an array of values - every grouping of 4 values represents the red, green, blue, and alpha values of a single pixel */
         this.origImgData;
+        if( arguments[0] ){ this.setImgData( arguments[0] ); };
+      },
+      
+      /*pass an image object or canvas*/
+      setImgData: function( imgOrCanvas ){
+        var canvas, context, imgData;
+        if( imgOrCanvas.getContext ){
+          this.origImgData = imgOrCanvas.getContext( "2d" ).getImageData( 0, 0, imgOrCanvas.width, imgOrCanvas.height );
+        }else{
+          canvas = document.createElement("canvas");
+          canvas.width = imgOrCanvas.width;
+    	    canvas.height = imgOrCanvas.height;
+    	    context = canvas.getContext("2d");
+    	    context.drawImage( imgOrCanvas, 0, 0 );
+    	    this.origImgData = context.getImageData( 0, 0, img.width, img.height );
+        }
       }
       
     }); 

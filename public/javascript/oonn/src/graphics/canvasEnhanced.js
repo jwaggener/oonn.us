@@ -32,7 +32,6 @@ define([
 	    /* the first 4 positions describe the first pixel - r g b and alpha */
 	    /* the next 4 describe the second pixel and so on */
 	    pixels = context.getImageData( 0, 0, img.width, img.height ).data;
-	    console.log( "pixels", pixels );
 	    // 4 is used to ask for 3 images: red, green, blue and
     	// black in that order.
     	for ( var rgbI = 0; rgbI < 4; rgbI++ ) {
@@ -66,7 +65,6 @@ define([
 	    context.drawImage( img, 0, 0 );
 	    
 	    imgData = context.getImageData( 0, 0, img.width, img.height );
-      console.log( "imgData", imgData );
       // invert colors
       for (var i=0;i<imgData.data.length;i+=4){
         imgData.data[i]=255-imgData.data[i];
@@ -74,12 +72,14 @@ define([
         imgData.data[i+2]=255-imgData.data[i+2];
         imgData.data[i+3]=255;
       }
-      
       context.putImageData(imgData,0,0);
       return canvas;
       
     },
     
+    /* if you are going to adjust a channel */
+    /* it should be on the basis of mean set of data - or the original set of data */
+    /* */
     adjustChannel: function( img, channel, val, target ){
       
       var canvas, context, imgData, toData;
