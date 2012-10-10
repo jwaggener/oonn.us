@@ -17,31 +17,19 @@ describe( "canvasEnhanced", function(){
     expect(arr[2].getContext).toBeDefined();
     expect(arr[3].getContext).toBeDefined();
     /*attach to the DOM to take a looksee*/
-    /*document.getElementById("stuff").appendChild( arr[0] );//testing
+    document.getElementById("stuff").appendChild( arr[0] );//testing
     document.getElementById("stuff").appendChild( arr[1] );//testing
     document.getElementById("stuff").appendChild( arr[2] );//testing
-    document.getElementById("stuff").appendChild( arr[3] );//testing*/
+    document.getElementById("stuff").appendChild( arr[3] );//testing
   } )
   
-  it("inverts the colors in an image", function(){
+  it("multiplies a specified channel -r, g, b, or alpha", function(){
     var img = document.getElementById("cat");
-    var enhanced = new CanvasEnhanced();
-    var c = enhanced.invert( img );
-    
-    var c = enhanced.invert( img );
-    
+    var enhanced = new CanvasEnhanced( img );
+    var c = enhanced.multiplyChannel( null, .2 );
+    c = enhanced.multiplyChannel( img, null, null, [ 1, 1, .3, 1 ] );
     document.getElementById("stuff").appendChild( c );
   })
-  
-  /*it("adjusts a specified channel -r, g, b, or alpha", function(){
-    var img = document.getElementById("cat");
-    var enhanced = new CanvasEnhanced();
-    var c = enhanced.invert( img );
-    
-    var c = enhanced.adjustChannel( img, null, 50 );
-    
-    document.getElementById("stuff").appendChild( c );
-  })*/
 
   
 })

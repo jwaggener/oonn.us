@@ -22,7 +22,9 @@
       tonal: "/javascripts/oonn/src/colors/tonal"
     });
     
-    require([ "colors/tonal", "colors/spectrum", "colors/conversions", "class/class", "graphics/canvas", "graphics/canvasEnhanced" ], function( Tonal, Spectrum, Conversions, Class, Canvas, CanvasEnhanced ){ 
+    require([ "colors/tonal", "colors/spectrum", "colors/conversions", "class/class",
+    "graphics/canvas", "graphics/canvasEnhanced", "graphics/filters/invert"
+     ], function( Tonal, Spectrum, Conversions, Class, Canvas, CanvasEnhanced, Invert ){ 
       
       window.tonal = Tonal.getInstance();
       
@@ -35,6 +37,8 @@
       window.Canvas = Canvas;
       
       window.CanvasEnhanced = CanvasEnhanced;
+      
+      window.Invert = Invert;
     
       var jasmineEnv = jasmine.getEnv();
       jasmineEnv.updateInterval = 1000;
@@ -73,6 +77,7 @@
   <script type="text/javascript" src="class/class.js"></script>
   <script type="text/javascript" src="graphics/canvas.js"></script>
   <script type="text/javascript" src="graphics/canvasEnhanced.js"></script>
+  <script type="text/javascript" src="graphics/filters/invert.js"></script>
 
 </head>
   <img id="cat" src="cat.jpg">
