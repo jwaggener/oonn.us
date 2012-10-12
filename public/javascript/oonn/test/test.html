@@ -3,7 +3,10 @@
 <html>
 <head>
   <title>Colors Test Runner</title>
-
+  
+  <!-- jquery -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+  
   <!-- require.js -->
   <script type="text/javascript" src="../lib/require.js"></script>
   
@@ -23,8 +26,9 @@
     });
     
     require([ "colors/tonal", "colors/spectrum", "colors/conversions", "class/class",
-    "graphics/canvas", "graphics/canvasEnhanced", "graphics/filters/invert"
-     ], function( Tonal, Spectrum, Conversions, Class, Canvas, CanvasEnhanced, Invert ){ 
+    "graphics/canvas", "graphics/canvasEnhanced", "graphics/filters/invert",
+    "loader/imageBatchLoader"
+     ], function( Tonal, Spectrum, Conversions, Class, Canvas, CanvasEnhanced, Invert, ImageBatchLoader ){ 
       
       window.tonal = Tonal.getInstance();
       
@@ -39,6 +43,8 @@
       window.CanvasEnhanced = CanvasEnhanced;
       
       window.Invert = Invert;
+      
+      window.ImageBatchLoader = ImageBatchLoader;
     
       var jasmineEnv = jasmine.getEnv();
       jasmineEnv.updateInterval = 1000;
@@ -78,6 +84,7 @@
   <script type="text/javascript" src="graphics/canvas.js"></script>
   <script type="text/javascript" src="graphics/canvasEnhanced.js"></script>
   <script type="text/javascript" src="graphics/filters/invert.js"></script>
+  <script type="text/javascript" src="loader/imageBatchLoader.js"></script>
 
 </head>
   <img id="cat" src="cat.jpg">
