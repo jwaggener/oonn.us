@@ -26,10 +26,16 @@
     });
     
     require([ "colors/tonal", "colors/spectrum", "colors/conversions", "class/class",
-    "graphics/CanvasRenderingContext2D/rgbks", "graphics/CanvasRenderingContext2D/filters/invert",
+    "graphics/CanvasRenderingContext2D/rgbks", "graphics/CanvasRenderingContext2D/multiplyChannels", "graphics/CanvasRenderingContext2D/filters/invert",
     "graphics/canvas", "graphics/canvasEnhanced",
     "loader/imageBatchLoader"
-     ], function( Tonal, Spectrum, Conversions, Class, rgbks, invert, Canvas, CanvasEnhanced, ImageBatchLoader ){ 
+     ], function( 
+       Tonal, Spectrum, Conversions,//related to colors
+       Class,//adds class functionality
+       rgbks, multiplyChannels, invert,//alters canvasrenderingcontext2d
+       Canvas, CanvasEnhanced,//canvas object
+       ImageBatchLoader//a batch load for images
+        ){ 
       
       window.tonal = Tonal.getInstance();
       
@@ -81,6 +87,7 @@
   <script type="text/javascript" src="colors/conversions.js"></script>
   <script type="text/javascript" src="class/class.js"></script>
   <script type="text/javascript" src="graphics/CanvasRenderingContext2D/rgbks.js"></script>
+  <script type="text/javascript" src="graphics/CanvasRenderingContext2D/multiplyChannels.js"></script>
   <script type="text/javascript" src="graphics/CanvasRenderingContext2D/filters/invert.js"></script>
   <script type="text/javascript" src="graphics/canvas.js"></script>
   <script type="text/javascript" src="graphics/canvasEnhanced.js"></script>
