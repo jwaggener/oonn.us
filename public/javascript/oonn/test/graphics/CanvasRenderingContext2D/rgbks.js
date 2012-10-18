@@ -20,8 +20,6 @@ describe( "CanvasRenderingContext2D.js", function(){
     expect(arr[3]).toBeDefined();
     expect(arr[3].data).toBeDefined();
     
-    console.log( "arr", arr );
-    
     /* write rgbk out to canvas elements in the browser */
     canvas = document.createElement("canvas");
     canvas.width = img.width;
