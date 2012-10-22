@@ -20,6 +20,18 @@ define([
         /* if a canvas is inited with data from an image object, the image data is saved */
         /* image data consists of a height, a width, and an array of values - every grouping of 4 values represents the red, green, blue, and alpha values of a single pixel */
         this.origImgData;
+        //if the argument is a canvas
+        if( arguments[0].getContext ){
+          
+        }
+        //if it's an image
+        else{
+          this.canvas = document.createElement("canvas");
+          this.canvas.width = arguments[0].width;
+	        this.canvas.height = arguments[0].height;
+	        this.context = canvas.getContext("2d");
+	        this.context.drawImage( arguments[0], 0, 0 );
+        }
         if( arguments[0] ){ this.setImgData( this.getImgData( arguments[0] ) ); };
         /* this is a hash that caches variations on img data. For example, if the inverse is requested, then that canvas or pixeldata is held at this.variations.inverse */
         this.variations = {};

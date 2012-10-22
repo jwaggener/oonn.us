@@ -1,0 +1,14 @@
+.pane{
+  background: #ccc;
+  position: absolute;
+  display: inline-block;
+  top:20px;
+  left:0;
+  
+}
+.paneTitle{
+  padding: .5em;
+}
+.paneContent{
+  padding: 1em;
+}

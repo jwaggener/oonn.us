@@ -11,6 +11,7 @@ define([], function(){
       this.images = [];
       this.loaded = 0; //integer that indicates how many have loaded
       if( arrOfUris ){
+        this.queue = arrOfUris;
         this.loadImages( this.queue );
       }
       
