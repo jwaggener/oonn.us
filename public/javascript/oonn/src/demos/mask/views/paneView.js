@@ -1,5 +1,5 @@
 define([
-  "text!demos/circles/resources/templates/pane.html"
+  "text!demos/mask/resources/templates/pane.html"
 ], function( Template ){
   
   var PaneView = Backbone.View.extend({
@@ -19,10 +19,10 @@ define([
         
         inputs:[
           {
-            id: "Degrees",
-            name: "Degrees",
+            id: "Radius",
+            name: "Radius",
             type: "range",
-            range: [0,360],
+            range: [0,1000],
             value: 360
           }
         ]
@@ -49,8 +49,8 @@ define([
       
       switch( $(e.currentTarget).attr('name') ){
         
-        case ( 'Degrees' ):
-        this.model.set( { "degrees": val } );
+        case ( 'Radius' ):
+        this.model.set( { "radius": val } );
         break;
         
       }

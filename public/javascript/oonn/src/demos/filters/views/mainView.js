@@ -2,7 +2,8 @@ define([
   'graphics/CanvasRenderingContext2D/rgbks',//extending CanvasRenderingContext2D
   'graphics/CanvasRenderingContext2D/multiplyChannels',//extending CanvasRenderingContext2D
   'graphics/CanvasRenderingContext2D/filters/grayscale',//extending CanvasRenderingContext2D
-  'graphics/CanvasRenderingContext2D/filters/invert'//extending CanvasRenderingContext2D
+  'graphics/CanvasRenderingContext2D/filters/invert',//extending CanvasRenderingContext2D
+  'graphics/CanvasRenderingContext2D/filters/monochrome'//extending CanvasRenderingContext2D
   ], function(){
   
   var MainView = Backbone.View.extend({
@@ -18,6 +19,7 @@ define([
     render: function(){
       
       this.original, this.b_w, this.multiplyChannel, this.invert;
+      this.none, this.atkinson, this.bayer, this.floydsteinberg;
       this.rgbks, this.r, this.b, this.g, this.k;
       var context;
       var imgdata;
@@ -42,6 +44,26 @@ define([
       this.invert.width = this.image.width; this.invert.height = this.image.height;
       imgdata = context.invertColors( 0, 0, this.image.width, this.image.height );
       this.invert.getContext("2d").putImageData( imgdata, 0, 0 );
+      
+      this.atkinson = this.createCanvas();
+      this.atkinson.width = this.image.width; this.atkinson.height = this.image.height;
+      imgdata = context.monochrome( 0, 0, this.image.width, this.image.height, 149 );
+      this.atkinson.getContext("2d").putImageData( imgdata, 0, 0 );
+      
+      this.none = this.createCanvas();
+      this.none.width = this.image.width; this.none.height = this.image.height;
+      imgdata = context.monochrome( 0, 0, this.image.width, this.image.height, 149, 'none' );
+      this.none.getContext("2d").putImageData( imgdata, 0, 0 );
+      
+      this.bayer = this.createCanvas();
+      this.bayer.width = this.image.width; this.bayer.height = this.image.height;
+      imgdata = context.monochrome( 0, 0, this.image.width, this.image.height, 149, 'bayer' );
+      this.bayer.getContext("2d").putImageData( imgdata, 0, 0 );
+      
+      this.floydsteinberg = this.createCanvas();
+      this.floydsteinberg.width = this.image.width; this.floydsteinberg.height = this.image.height;
+      imgdata = context.monochrome( 0, 0, this.image.width, this.image.height, 149, 'floydsteinberg' );
+      this.floydsteinberg.getContext("2d").putImageData( imgdata, 0, 0 );
       
       this.rgbks = this.createCanvas();
       this.rgbks.width = this.image.width; this.rgbks.height = this.image.height;
@@ -71,6 +93,10 @@ define([
       this.$el.append( this.b_w );
       this.$el.append( this.multiplyChannel );
       this.$el.append( this.invert );
+      this.$el.append( this.none );
+      this.$el.append( this.atkinson );
+      this.$el.append( this.bayer );
+      this.$el.append( this.floydsteinberg );
       this.$el.append( this.r );
       this.$el.append( this.g );
       this.$el.append( this.b );

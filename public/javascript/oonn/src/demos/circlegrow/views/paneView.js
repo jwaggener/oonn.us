@@ -1,5 +1,5 @@
 define([
-  "text!demos/circles/resources/templates/pane.html"
+  "text!demos/circlegrow/resources/templates/pane.html"
 ], function( Template ){
   
   var PaneView = Backbone.View.extend({

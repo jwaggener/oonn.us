@@ -4,8 +4,9 @@ define([
   'demos/cats/views/mainView',
   'demos/filters/views/mainView',
   'demos/circles/main',
-  'demos/polygons/main'
-  ], function( MainView, Grid, Cats, Filters, Circles, Polygons ){
+  'demos/polygons/main',
+  'demos/mask/main'
+  ], function( MainView, Grid, Cats, Filters, Circle, Polygons, Mask ){
   
   var Router = Backbone.Router.extend({
     
@@ -34,12 +35,16 @@ define([
         this.filters();
         break;
         
-        case("circles"):
-        this.circles();
+        case("circle"):
+        this.circle();
         break;
         
         case("polygons"):
         this.polygons();
+        break;
+        
+        case("mask"):
+        this.mask();
         break;
         
         default:
@@ -71,14 +76,19 @@ define([
       this.content.html( filters.el );
     },
     
-    circles: function(){
-      var circles = new Circles();
-      this.content.html( circles.el );
+    circle: function(){
+      var circle = new Circle();
+      this.content.html( circle.el );
     },
     
     polygons: function(){
       var polygons = new Polygons();
       this.content.html( polygons.el );
+    },
+    
+    mask: function(){
+      var mask = new Mask();
+      this.content.html( mask.el );
     }
     
   });

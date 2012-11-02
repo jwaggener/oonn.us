@@ -1,0 +1,12 @@
+<div class="paneTitle" >
+  <h1><%= title %></h1>
+</div>
+<div class="paneContent">
+  <% var i = 0, l = inputs.length; %>
+  <% for( i=0; i<l; i++ ){ %>
+    <% if( inputs[i].type == 'range' ){ %>
+      <h2><%= inputs[i].name %>: <span id='<%= inputs[i].id + "-print-value" %>' ><%= inputs[i].value %></span></h2>
+      <input name='<%= inputs[i].id %>' type='range' min='<%= inputs[i].range[0] %>' max='<%= inputs[i].range[1] %>' value='<%= inputs[i].value %>' />
+    <% } %>
+  <% } %>
+</div>

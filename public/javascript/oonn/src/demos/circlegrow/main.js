@@ -1,5 +1,5 @@
 define([
-  "demos/circles/views/paneView",
+  "demos/circlegrow/views/paneView",
   ], function( PaneView ){
   
   /* 4 examples of creating a circle */
